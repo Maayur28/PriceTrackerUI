@@ -1,0 +1,23 @@
+@media only screen and (max-width: 480px) {
+  #captcha {
+    margin: 0 !important;
+    max-width: 200px !important;
+    height: auto !important;
+  }
+  .recaptchatable .recaptcha_r1_c1,
+  .recaptchatable .recaptcha_r3_c1,
+  .recaptchatable .recaptcha_r3_c2,
+  .recaptchatable .recaptcha_r7_c1,
+  .recaptchatable .recaptcha_r8_c1,
+  .recaptchatable .recaptcha_r3_c3,
+  .recaptchatable .recaptcha_r2_c1,
+  .recaptchatable .recaptcha_r4_c1,
+  .recaptchatable .recaptcha_r4_c2,
+  .recaptchatable .recaptcha_r4_c4,
+  .recaptchatable .recaptcha_image_cell {
+    margin: 0 !important;
+    width: 100% !important;
+    background: none !important;
+    height: auto !important;
+  }
+}

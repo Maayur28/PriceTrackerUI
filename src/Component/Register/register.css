@@ -1,0 +1,28 @@
+.register {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 80vh;
+  align-items: center;
+}
+.ant-steps {
+  width: 300px;
+}
+.login_button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
+}
+.verifyOtp {
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+}
+/* .ant-steps-item-icon {
+  background-color: #7f4574 !important;
+} */
+.ant-steps .ant-steps-item-process .ant-steps-item-icon {
+  background-color: #7F4574;
+  border-color: #7F4574;
+}

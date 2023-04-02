@@ -1,0 +1,23 @@
+.home-component {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  width: 99vw;
+  overflow-x: hidden;
+}
+.search-component {
+  width: 70vw !important;
+}
+.timeline-container {
+  min-height: 300px;
+  margin-top: 50px;
+  margin-left: -60px;
+}
+.ant-timeline-item {
+  height: 40px !important;
+}
+.timeline-text {
+  font-weight: bolder !important;
+}

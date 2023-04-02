@@ -1,0 +1,18 @@
+.trackers-container {
+  display: flex;
+  width: 80vw;
+  height: 100vh;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.ant-card-cover {
+  text-align: center !important;
+}
+.tracker-close-button {
+  font-size: 18px !important;
+  position: absolute;
+  top: 2%;
+  right: 2%;
+  cursor: pointer;
+}
