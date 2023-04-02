@@ -96,7 +96,7 @@ const Register = () => {
             path: "",
           });
           message.success("Registered Successfully", 3);
-          navigate("/problems");
+          navigate("/trackers");
         }
       })
       .catch((err) => {

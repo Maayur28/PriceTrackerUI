@@ -36,7 +36,11 @@ const Trackers = () => {
     ) {
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
-      navigate("/");
+      messageApi.open({
+        type: "error",
+        content: "Login to view trackers",
+      });
+      navigate("/login");
     } else {
       setloading(true);
       try {

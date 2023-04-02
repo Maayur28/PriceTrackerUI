@@ -59,7 +59,7 @@ const Login = () => {
           path: "",
         });
         message.success("Login Successful", 5);
-        navigate("/");
+        navigate("/trackers");
       })
       .catch((err) => {
         setIsSubmitting(false);
