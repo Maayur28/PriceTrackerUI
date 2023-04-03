@@ -50,7 +50,7 @@ const Home = () => {
       expires: 7,
       path: "",
     });
-    navigate(`/?url=${val}`);
+    navigate(`/scrap?url=${val}`);
   };
 
   const onSearch = async (val) => {
