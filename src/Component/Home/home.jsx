@@ -59,7 +59,7 @@ const Home = () => {
       setData({});
       val = val.trim();
       try {
-        let response = await client.get(`?url=${val}`);
+        let response = await client.get(`/scrap?url=${val}`);
         if (
           response.status === 200 &&
           response.data != null &&
@@ -68,7 +68,7 @@ const Home = () => {
         ) {
           setData(response.data);
         }
-        navigate(`/scrap/?url=${val}`);
+        navigate(`/?url=${val}`);
         Cookies.set("pricetracker_url", val, {
           expires: 7,
           path: "",
