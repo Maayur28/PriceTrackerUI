@@ -50,7 +50,7 @@ const Home = () => {
       expires: 7,
       path: "",
     });
-    navigate(`/scrap?url=${val}`);
+    navigate(`/?url=${val}`);
   };
 
   const onSearch = async (val) => {
@@ -68,7 +68,7 @@ const Home = () => {
         ) {
           setData(response.data);
         }
-        navigate(`/?url=${val}`);
+        navigate(`/scrap/?url=${val}`);
         Cookies.set("pricetracker_url", val, {
           expires: 7,
           path: "",
