@@ -1,7 +1,7 @@
 .trackers-container {
   display: flex;
   width: 98vw;
-  height: 100vh;
+  min-height: 88vh;
   margin-top: 20px;
   justify-content: flex-start;
   flex-wrap: wrap;

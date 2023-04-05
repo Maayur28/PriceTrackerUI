@@ -13,6 +13,7 @@ import {
   Button,
   Form,
   Skeleton,
+  Image,
 } from "antd";
 import { CloseOutlined, CheckOutlined, EditOutlined } from "@ant-design/icons";
 import fmt from "indian-number-format";
@@ -247,9 +248,9 @@ const Trackers = () => {
                       src={val.image}
                       style={{
                         textAlign: "center",
-                        padding: "20px",
-                        width: "300px",
-                        height: "250px",
+                        padding: "10px",
+                        width: "280px",
+                        height: "220px",
                       }}
                     />
                   }
@@ -262,6 +263,21 @@ const Trackers = () => {
                     title={val.title}
                     description={
                       <div style={{ textAlign: "left" }}>
+                        {val.domain != null &&
+                          val.domain !== undefined &&
+                          val.domain !== "" && (
+                            <>
+                              <Image
+                                preview={false}
+                                src={
+                                  val.domain === "AMAZON"
+                                    ? "/amazon.png"
+                                    : "flipkart.png"
+                                }
+                              />
+                            </>
+                          )}
+                        <br />
                         {val.rating.totalRated != null &&
                           val.rating.totalRated !== undefined &&
                           val.rating.totalRated !== "" && (
@@ -309,59 +325,85 @@ const Trackers = () => {
                             </>
                           )}
                         </div>
-                        <Divider>Alert Price</Divider>
-                        <Space.Compact
-                          style={{
-                            width: "100%",
-                          }}
-                        >
-                          <Form.Item>
-                            <InputNumber
-                              name="alertPrice"
-                              addonBefore="₹"
-                              min={1}
-                              max={val.price.discountPrice - 1}
-                              value={val.alertPrice}
-                              readOnly={val.productId !== edit}
-                              onChange={(value) => setalertPrice(value)}
-                            />
-                          </Form.Item>
-                          <Form.Item>
-                            {edit === val.productId ? (
-                              <Button
-                                icon={<CheckOutlined />}
-                                size="smmall"
-                                style={{
-                                  color: "white",
-                                  backgroundColor: "#7F4574",
-                                }}
-                                type="primary"
-                                onClick={handleAlertPrice}
-                                disabled={
-                                  alertPrice === 0 ||
-                                  alertPrice === val.alertPrice
-                                }
-                              >
-                                Update
-                              </Button>
-                            ) : (
-                              <Button
-                                icon={<EditOutlined />}
-                                size="smmall"
-                                onClick={() => handleEdit(val.productId)}
-                              >
-                                Edit
-                              </Button>
-                            )}
-                          </Form.Item>
-                        </Space.Compact>
+                        <div>
+                          <Divider>Alert Price</Divider>
+                          <Space.Compact
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Form.Item>
+                              <InputNumber
+                                name="alertPrice"
+                                addonBefore="₹"
+                                min={1}
+                                max={val.price.discountPrice - 1}
+                                value={val.alertPrice}
+                                readOnly={val.productId !== edit}
+                                onChange={(value) => setalertPrice(value)}
+                              />
+                            </Form.Item>
+                            <Form.Item>
+                              {edit === val.productId ? (
+                                <Button
+                                  icon={<CheckOutlined />}
+                                  size="smmall"
+                                  style={{
+                                    color: "white",
+                                    backgroundColor: "#7F4574",
+                                  }}
+                                  type="primary"
+                                  onClick={handleAlertPrice}
+                                  disabled={
+                                    alertPrice === 0 ||
+                                    alertPrice === val.alertPrice
+                                  }
+                                >
+                                  Update
+                                </Button>
+                              ) : (
+                                <Button
+                                  icon={<EditOutlined />}
+                                  size="smmall"
+                                  onClick={() => handleEdit(val.productId)}
+                                >
+                                  Edit
+                                </Button>
+                              )}
+                            </Form.Item>
+                          </Space.Compact>
+                        </div>
                       </div>
                     }
                   />
                 </Card>
               ))
             ) : (
-              <>{JSON.stringify(data)}</>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  height: "70vh",
+                }}
+              >
+                <Image
+                  preview={false}
+                  src="/empty-cart.gif"
+                  width="60vw"
+                  height="40vh"
+                />
+                <Text style={{ fontSize: "40px", fontWeight: "bolder" }}>
+                  Your tracking list is empty
+                </Text>
+                <Text style={{ fontSize: "24px", fontWeight: "400" }}>
+                  Looks like you have not added anything to your tracking list.
+                </Text>
+              </div>
             )}
           </>
         )}
