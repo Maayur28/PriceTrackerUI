@@ -207,7 +207,7 @@ const Trackers = () => {
             style={{
               display: "flex",
               flexWrap: "wrap",
-              justifyContent: "flex-start",
+              justifyContent: "center",
             }}
           >
             <Skeleton.Input

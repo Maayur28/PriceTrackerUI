@@ -29,7 +29,7 @@ const Home = () => {
     if (loading) {
       const interval = setInterval(() => {
         setCurrentTimeline(currentTimeline + 1);
-        setCurrentIntervalTime(Math.floor((Math.random() + 1.5) * 2000));
+        setCurrentIntervalTime(Math.floor((Math.random() + 1) * 1000));
       }, currentIntervalTime);
 
       return () => clearInterval(interval);
