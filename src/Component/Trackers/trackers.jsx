@@ -239,7 +239,7 @@ const Trackers = () => {
                         : containerWidth > 900 && containerWidth <= 1200
                         ? "400px"
                         : "30vw",
-                    height: 520,
+                    height: 460,
                     margin: "15px",
                   }}
                   cover={
@@ -263,21 +263,6 @@ const Trackers = () => {
                     title={val.title}
                     description={
                       <div style={{ textAlign: "left" }}>
-                        {val.domain != null &&
-                          val.domain !== undefined &&
-                          val.domain !== "" && (
-                            <>
-                              <Image
-                                preview={false}
-                                src={
-                                  val.domain === "AMAZON"
-                                    ? "/amazon.png"
-                                    : "flipkart.png"
-                                }
-                              />
-                            </>
-                          )}
-                        <br />
                         {val.rating.totalRated != null &&
                           val.rating.totalRated !== undefined &&
                           val.rating.totalRated !== "" && (
@@ -326,54 +311,90 @@ const Trackers = () => {
                           )}
                         </div>
                         <div>
-                          <Divider>Alert Price</Divider>
-                          <Space.Compact
+                          <Divider style={{ margin: "10px" }}>
+                            Alert Price & Buy On
+                          </Divider>
+                          <div
                             style={{
-                              width: "100%",
                               display: "flex",
-                              justifyContent: "center",
+                              justifyContent: "space-evenly",
+                              alignItems: "flex-start",
                             }}
                           >
-                            <Form.Item>
-                              <InputNumber
-                                name="alertPrice"
-                                addonBefore="₹"
-                                min={1}
-                                max={val.price.discountPrice - 1}
-                                value={val.alertPrice}
-                                readOnly={val.productId !== edit}
-                                onChange={(value) => setalertPrice(value)}
-                              />
-                            </Form.Item>
-                            <Form.Item>
-                              {edit === val.productId ? (
+                            <Space.Compact
+                              style={{
+                                width: "70%",
+                                minWidth: "150px",
+                                display: "flex",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Form.Item>
+                                <InputNumber
+                                  name="alertPrice"
+                                  addonBefore="₹"
+                                  min={1}
+                                  max={val.price.discountPrice - 1}
+                                  value={val.alertPrice}
+                                  readOnly={val.productId !== edit}
+                                  onChange={(value) => setalertPrice(value)}
+                                />
+                              </Form.Item>
+                              <Form.Item>
+                                {edit === val.productId ? (
+                                  <Button
+                                    icon={<CheckOutlined />}
+                                    size="smmall"
+                                    style={{
+                                      color: "white",
+                                      backgroundColor: "#7F4574",
+                                    }}
+                                    type="primary"
+                                    onClick={handleAlertPrice}
+                                    disabled={
+                                      alertPrice === 0 ||
+                                      alertPrice === val.alertPrice
+                                    }
+                                  >
+                                    Update
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    icon={<EditOutlined />}
+                                    size="smmall"
+                                    onClick={() => handleEdit(val.productId)}
+                                  >
+                                    Edit
+                                  </Button>
+                                )}
+                              </Form.Item>
+                            </Space.Compact>
+                            <div>
+                              {val.domain === "FLIPKART" ? (
                                 <Button
-                                  icon={<CheckOutlined />}
-                                  size="smmall"
                                   style={{
-                                    color: "white",
-                                    backgroundColor: "#7F4574",
+                                    margin: "0",
+                                    backgroundColor: "#F9DE21",
+                                    color: "#107BD4",
+                                    fontWeight: "bolder",
                                   }}
-                                  type="primary"
-                                  onClick={handleAlertPrice}
-                                  disabled={
-                                    alertPrice === 0 ||
-                                    alertPrice === val.alertPrice
-                                  }
                                 >
-                                  Update
+                                  {val.domain}
                                 </Button>
                               ) : (
                                 <Button
-                                  icon={<EditOutlined />}
-                                  size="smmall"
-                                  onClick={() => handleEdit(val.productId)}
+                                  style={{
+                                    margin: "0",
+                                    backgroundColor: "#FF9900",
+                                    color: "white",
+                                    fontWeight: "bolder",
+                                  }}
                                 >
-                                  Edit
+                                  {val.domain}
                                 </Button>
                               )}
-                            </Form.Item>
-                          </Space.Compact>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     }
