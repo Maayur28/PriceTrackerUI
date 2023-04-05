@@ -22,6 +22,8 @@ const { Meta } = Card;
 const { Title, Text } = Typography;
 
 const Trackers = () => {
+  const containerWidth = window.innerWidth;
+  console.log(containerWidth);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
@@ -205,24 +207,20 @@ const Trackers = () => {
             style={{
               display: "flex",
               flexWrap: "wrap",
-              justifyContent: "center",
+              justifyContent: "flex-start",
             }}
           >
             <Skeleton.Input
               active={true}
-              style={{ width: "19vw", height: "400px", margin: "5px" }}
+              style={{ width: "30vw", height: "400px", margin: "5px" }}
             />
             <Skeleton.Input
               active={true}
-              style={{ width: "19vw", height: "400px", margin: "5px" }}
+              style={{ width: "30vw", height: "400px", margin: "5px" }}
             />
             <Skeleton.Input
               active={true}
-              style={{ width: "19vw", height: "400px", margin: "5px" }}
-            />
-            <Skeleton.Input
-              active={true}
-              style={{ width: "19vw", height: "400px", margin: "5px" }}
+              style={{ width: "30vw", height: "400px", margin: "5px" }}
             />
           </div>
         ) : (
@@ -232,7 +230,14 @@ const Trackers = () => {
                 <Card
                   key={`tracker${index}`}
                   style={{
-                    width: 300,
+                    width:
+                      containerWidth <= 650
+                        ? "90vw"
+                        : containerWidth > 650 && containerWidth <= 900
+                        ? "44vw"
+                        : containerWidth > 900 && containerWidth <= 1200
+                        ? "400px"
+                        : "30vw",
                     height: 520,
                     margin: "15px",
                   }}

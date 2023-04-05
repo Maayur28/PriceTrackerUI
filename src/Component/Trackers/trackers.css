@@ -1,9 +1,9 @@
 .trackers-container {
   display: flex;
-  width: 80vw;
+  width: 98vw;
   height: 100vh;
   margin-top: 20px;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 .ant-card-cover {
