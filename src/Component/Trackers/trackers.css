@@ -7,7 +7,8 @@
   flex-wrap: wrap;
 }
 .ant-card-cover {
-  text-align: center !important;
+  display: flex;
+  justify-content: center;
 }
 .tracker-close-button {
   font-size: 18px !important;

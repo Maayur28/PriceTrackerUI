@@ -248,7 +248,7 @@ const Trackers = () => {
                       style={{
                         textAlign: "center",
                         padding: "20px",
-                        width: "250px",
+                        width: "300px",
                         height: "250px",
                       }}
                     />
@@ -312,7 +312,7 @@ const Trackers = () => {
                         <Divider>Alert Price</Divider>
                         <Space.Compact
                           style={{
-                            width: "100%%",
+                            width: "100%",
                           }}
                         >
                           <Form.Item>
