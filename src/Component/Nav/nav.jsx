@@ -22,15 +22,6 @@ const Nav = () => {
     }
   };
 
-  const setAlertUrl = () => {
-    Cookies.set("pricetracker_url", "", {
-      expires: 7,
-      path: "",
-    });
-    navigate("/");
-    window.location.reload(false);
-  };
-
   return (
     <Layout style={{ height: "60px" }}>
       <Header
@@ -40,7 +31,7 @@ const Nav = () => {
         }}
       >
         <Menu mode="horizontal">
-          <Menu.Item key="logo" onClick={setAlertUrl}>
+          <Menu.Item key="logo" onClick={() => navigate("/")}>
             <Image
               width={80}
               height={50}

@@ -84,7 +84,7 @@ const TimelineStatus = ({currentTimeline}) => {
               />
             )
           }
-          color={currentTimeline >= 10 ? "red" : "grey"}
+          color={currentTimeline >= 20 ? "red" : "grey"}
         ></Timeline.Item>
       </Timeline>
     </div>
