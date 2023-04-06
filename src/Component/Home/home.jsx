@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Input, Image, message } from "antd";
+import { Input, Image, message, Button } from "antd";
 import axios from "axios";
 import "./home.css";
 import TimelineStatus from "../TimelineStatus/timelineStatus";
 import PDP from "../PDP/pdp";
 import PriceHistory from "../PriceHistory/priceHistory";
+import { SnippetsOutlined } from "@ant-design/icons";
 const { Search } = Input;
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
   const [currentIntervalTime, setCurrentIntervalTime] = useState(1000);
   const [messageApi, contextHolder] = message.useMessage();
   const [data, setData] = useState({});
+  const [searchValue, setSearchValue] = useState("");
   const [priceHistory, setpriceHistory] = useState({});
   const client = axios.create({
     baseURL: "https://price-tracker-orchestration.vercel.app",
@@ -35,6 +37,15 @@ const Home = () => {
     );
     if (res == null) return false;
     else return true;
+  };
+
+  const handlePaste = async (event) => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setSearchValue(text);
+    } catch (error) {
+      console.log("Failed to read clipboard. Using execCommand instead.");
+    }
   };
 
   const onSearch = async (val) => {
@@ -87,14 +98,27 @@ const Home = () => {
         preview={false}
         src="/pricetracker-high-resolution-logo-color-on-transparent-background (1).png"
       />
-      <Search
-        className="search-component"
-        placeholder="Paste your url"
-        allowClear
-        loading={loading}
-        size="large"
-        onSearch={onSearch}
-      />
+      <div style={{ display: "flex" }}>
+        <Search
+          className="search-component"
+          placeholder="Paste your url"
+          allowClear
+          loading={loading}
+          size="large"
+          value={searchValue}
+          enterButton="Search"
+          onChange={(e) => setSearchValue(e.target.value)}
+          onSearch={onSearch}
+        />
+        <Button
+          icon={<SnippetsOutlined />}
+          type="button"
+          className="btn paste-wrap"
+          onClick={handlePaste}
+        >
+          Paste
+        </Button>
+      </div>
       <div
         className="timeline-container"
         style={{
