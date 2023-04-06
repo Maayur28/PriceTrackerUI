@@ -14,6 +14,7 @@ import {
   Form,
   Skeleton,
   Image,
+  Spin,
 } from "antd";
 import { CloseOutlined, CheckOutlined, EditOutlined } from "@ant-design/icons";
 import fmt from "indian-number-format";
@@ -28,8 +29,10 @@ const Trackers = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
+  const [buttonLoading, setbuttonLoading] = useState(false);
   const [edit, setEdit] = useState("");
   const [data, setData] = useState([]);
+  const [deleteLoading, setDeleteLoading] = useState("");
   const [alertPrice, setalertPrice] = useState(0);
 
   const fetchTracker = async () => {
@@ -98,7 +101,7 @@ const Trackers = () => {
       });
     } else {
       if (alertPrice > 0) {
-        setloading(true);
+        setbuttonLoading(true);
         try {
           let obj = {};
           obj.alertPrice = alertPrice;
@@ -128,11 +131,11 @@ const Trackers = () => {
               });
             }
           }
-          setloading(false);
+          setbuttonLoading(false);
           setEdit("");
           setalertPrice(0);
         } catch (error) {
-          setloading(false);
+          setbuttonLoading(false);
           messageApi.open({
             type: "error",
             content: error.response.data,
@@ -159,8 +162,8 @@ const Trackers = () => {
         content: "Please login!!!",
       });
     } else {
-      setloading(true);
       try {
+        setDeleteLoading(productId);
         let obj = {};
         obj.productId = productId;
         obj.accessToken = Cookies.get("accessToken");
@@ -182,15 +185,15 @@ const Trackers = () => {
         ) {
           if (response.data) {
             setData(response.data.data);
+            setDeleteLoading("");
             messageApi.open({
               type: "success",
               content: "Deleted",
             });
           }
         }
-        setloading(false);
       } catch (error) {
-        setloading(false);
+        setDeleteLoading("");
         messageApi.open({
           type: "error",
           content: error.response.data,
@@ -232,187 +235,192 @@ const Trackers = () => {
           <>
             {data != null && data !== undefined && data.length > 0 ? (
               data.map((val, index) => (
-                <Card
-                  key={`tracker${index}`}
-                  style={{
-                    width:
-                      containerWidth <= 650
-                        ? "90vw"
-                        : containerWidth > 650 && containerWidth <= 900
-                        ? "44vw"
-                        : containerWidth > 900 && containerWidth <= 1200
-                        ? "400px"
-                        : "30vw",
-                    height: 460,
-                    margin: "15px",
-                  }}
-                  cover={
-                    <img
-                      alt="product_image"
-                      src={val.image}
-                      style={{
-                        textAlign: "center",
-                        padding: "10px",
-                        width: "280px",
-                        height: "220px",
-                      }}
+                <Spin spinning={deleteLoading === val.productId}>
+                  <Card
+                    key={`tracker${index}`}
+                    style={{
+                      width:
+                        containerWidth <= 650
+                          ? "90vw"
+                          : containerWidth > 650 && containerWidth <= 900
+                          ? "44vw"
+                          : containerWidth > 900 && containerWidth <= 1200
+                          ? "400px"
+                          : "30vw",
+                      height: 460,
+                      margin: "15px",
+                    }}
+                    cover={
+                      <img
+                        alt="product_image"
+                        src={val.image}
+                        style={{
+                          textAlign: "center",
+                          padding: "10px",
+                          width: "280px",
+                          height: "220px",
+                        }}
+                      />
+                    }
+                  >
+                    <CloseOutlined
+                      className="tracker-close-button"
+                      onClick={() => handleDelete(val.productId)}
                     />
-                  }
-                >
-                  <CloseOutlined
-                    className="tracker-close-button"
-                    onClick={() => handleDelete(val.productId)}
-                  />
-                  <Meta
-                    style={{ textAlign: "left" }}
-                    title={val.title}
-                    description={
-                      <div>
-                        {val.rating != null &&
-                        val.rating !== undefined &&
-                        val.rating.totalRated != null &&
-                        val.rating.totalRated !== undefined &&
-                        val.rating.totalRated !== "" ? (
-                          <Tag color="#2F903B">
-                            {val.rating.ratingCount} | {val.rating.totalRated}
-                          </Tag>
-                        ) : (
-                          <Tag color="#C6C6C6">Not Rated</Tag>
-                        )}
-                        <div className="pdp-price-container">
-                          <Title
-                            level={2}
-                            style={{ margin: "0", marginRight: "5px" }}
-                          >
-                            ₹{fmt.format(val.price.discountPrice)}
-                          </Title>
-                          {val.price.discountPrice !==
-                            val.price.originalPrice && (
-                            <>
-                              <Text
-                                type="secondary"
-                                style={{
-                                  fontSize: "18px",
-                                  marginRight: "5px",
-                                }}
-                                delete
-                                strong
-                              >
-                                ₹{fmt.format(val.price.originalPrice)}
-                              </Text>
-                              <Title
-                                level={5}
-                                style={{
-                                  color: "#07976A",
-                                  fontWeight: "bolder",
-                                  margin: "0",
-                                }}
-                              >
-                                {Math.floor(
-                                  ((val.price.originalPrice -
-                                    val.price.discountPrice) /
-                                    val.price.originalPrice) *
-                                    100
-                                )}
-                                % off
-                              </Title>
-                            </>
-                          )}
-                        </div>
+                    <Meta
+                      style={{ textAlign: "left" }}
+                      title={val.title}
+                      description={
                         <div>
-                          <Divider style={{ margin: "10px" }}>
-                            Alert Price & Buy On
-                          </Divider>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-evenly",
-                              alignItems: "flex-start",
-                            }}
-                          >
-                            <Space.Compact
+                          {val.rating != null &&
+                          val.rating !== undefined &&
+                          val.rating.totalRated != null &&
+                          val.rating.totalRated !== undefined &&
+                          val.rating.totalRated !== "" ? (
+                            <Tag color="#2F903B">
+                              {val.rating.ratingCount} | {val.rating.totalRated}
+                            </Tag>
+                          ) : (
+                            <Tag color="#C6C6C6">Not Rated</Tag>
+                          )}
+                          <div className="pdp-price-container">
+                            <Title
+                              level={2}
+                              style={{ margin: "0", marginRight: "5px" }}
+                            >
+                              ₹{fmt.format(val.price.discountPrice)}
+                            </Title>
+                            {val.price.discountPrice !==
+                              val.price.originalPrice && (
+                              <>
+                                <Text
+                                  type="secondary"
+                                  style={{
+                                    fontSize: "18px",
+                                    marginRight: "5px",
+                                  }}
+                                  delete
+                                  strong
+                                >
+                                  ₹{fmt.format(val.price.originalPrice)}
+                                </Text>
+                                <Title
+                                  level={5}
+                                  style={{
+                                    color: "#07976A",
+                                    fontWeight: "bolder",
+                                    margin: "0",
+                                  }}
+                                >
+                                  {Math.floor(
+                                    ((val.price.originalPrice -
+                                      val.price.discountPrice) /
+                                      val.price.originalPrice) *
+                                      100
+                                  )}
+                                  % off
+                                </Title>
+                              </>
+                            )}
+                          </div>
+                          <div>
+                            <Divider style={{ margin: "10px" }}>
+                              Alert Price & Buy On
+                            </Divider>
+                            <div
                               style={{
-                                width: "70%",
-                                minWidth: "150px",
                                 display: "flex",
-                                justifyContent: "center",
+                                justifyContent: "space-evenly",
+                                alignItems: "flex-start",
                               }}
                             >
-                              <Form.Item>
-                                <InputNumber
-                                  name="alertPrice"
-                                  addonBefore="₹"
-                                  min={1}
-                                  max={val.price.discountPrice - 1}
-                                  value={val.alertPrice}
-                                  readOnly={val.productId !== edit}
-                                  onChange={(value) => setalertPrice(value)}
-                                />
-                              </Form.Item>
-                              <Form.Item>
-                                {edit === val.productId ? (
+                              <Space.Compact
+                                style={{
+                                  width: "70%",
+                                  minWidth: "150px",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <Form.Item>
+                                  <InputNumber
+                                    name="alertPrice"
+                                    addonBefore="₹"
+                                    min={1}
+                                    max={val.price.discountPrice - 1}
+                                    value={val.alertPrice}
+                                    readOnly={val.productId !== edit}
+                                    onChange={(value) => setalertPrice(value)}
+                                  />
+                                </Form.Item>
+                                <Form.Item>
+                                  {edit === val.productId ? (
+                                    <Button
+                                      icon={<CheckOutlined />}
+                                      size="smmall"
+                                      style={{
+                                        color: "white",
+                                        backgroundColor: "#7F4574",
+                                      }}
+                                      type="primary"
+                                      onClick={handleAlertPrice}
+                                      disabled={
+                                        alertPrice === 0 ||
+                                        alertPrice === val.alertPrice
+                                      }
+                                      loading={buttonLoading}
+                                    >
+                                      Update
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      icon={<EditOutlined />}
+                                      size="smmall"
+                                      onClick={() => handleEdit(val.productId)}
+                                    >
+                                      Edit
+                                    </Button>
+                                  )}
+                                </Form.Item>
+                              </Space.Compact>
+                              <div>
+                                {val.domain === "FLIPKART" ? (
                                   <Button
-                                    icon={<CheckOutlined />}
-                                    size="smmall"
+                                    onClick={() => openInNewTab(val.url)}
                                     style={{
-                                      color: "white",
-                                      backgroundColor: "#7F4574",
+                                      margin: "0",
+                                      backgroundColor: "#F9DE21",
+                                      color: "#107BD4",
+                                      fontWeight: "bolder",
                                     }}
-                                    type="primary"
-                                    onClick={handleAlertPrice}
-                                    disabled={
-                                      alertPrice === 0 ||
-                                      alertPrice === val.alertPrice
-                                    }
                                   >
-                                    Update
+                                    {val.domain}
                                   </Button>
                                 ) : (
                                   <Button
-                                    icon={<EditOutlined />}
-                                    size="smmall"
-                                    onClick={() => handleEdit(val.productId)}
+                                    onClick={() =>
+                                      openInNewTab(
+                                        val.url + "&tag=mayur280e-21"
+                                      )
+                                    }
+                                    style={{
+                                      margin: "0",
+                                      backgroundColor: "#FF9900",
+                                      color: "white",
+                                      fontWeight: "bolder",
+                                    }}
                                   >
-                                    Edit
+                                    {val.domain}
                                   </Button>
                                 )}
-                              </Form.Item>
-                            </Space.Compact>
-                            <div>
-                              {val.domain === "FLIPKART" ? (
-                                <Button
-                                  onClick={() => openInNewTab(val.url)}
-                                  style={{
-                                    margin: "0",
-                                    backgroundColor: "#F9DE21",
-                                    color: "#107BD4",
-                                    fontWeight: "bolder",
-                                  }}
-                                >
-                                  {val.domain}
-                                </Button>
-                              ) : (
-                                <Button
-                                  onClick={() =>
-                                    openInNewTab(val.url + "&tag=mayur280e-21")
-                                  }
-                                  style={{
-                                    margin: "0",
-                                    backgroundColor: "#FF9900",
-                                    color: "white",
-                                    fontWeight: "bolder",
-                                  }}
-                                >
-                                  {val.domain}
-                                </Button>
-                              )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    }
-                  />
-                </Card>
+                      }
+                    />
+                  </Card>
+                </Spin>
               ))
             ) : (
               <div
