@@ -4,6 +4,7 @@ import axios from "axios";
 import "./home.css";
 import TimelineStatus from "../TimelineStatus/timelineStatus";
 import PDP from "../PDP/pdp";
+import PriceHistory from "../PriceHistory/priceHistory";
 const { Search } = Input;
 
 const Home = () => {
@@ -12,6 +13,7 @@ const Home = () => {
   const [currentIntervalTime, setCurrentIntervalTime] = useState(1000);
   const [messageApi, contextHolder] = message.useMessage();
   const [data, setData] = useState({});
+  const [priceHistory, setpriceHistory] = useState({});
   const client = axios.create({
     baseURL: "https://price-tracker-orchestration.vercel.app",
   });
@@ -36,6 +38,7 @@ const Home = () => {
   };
 
   const onSearch = async (val) => {
+    setCurrentTimeline(0);
     if (val != null && val !== undefined && val !== "" && validateURL(val)) {
       setloading(true);
       setData({});
@@ -46,9 +49,22 @@ const Home = () => {
           response.status === 200 &&
           response.data != null &&
           response.data !== undefined &&
-          response.data !== ""
+          response.data !== "" &&
+          response.data.response != null &&
+          response.data.response !== undefined &&
+          response.data.response !== "" &&
+          response.data.response.data != null &&
+          response.data.response.data !== undefined &&
+          response.data.response.data !== ""
         ) {
-          setData(response.data);
+          setData(response.data.response.data);
+          if (
+            response.data.response.priceHistory != null &&
+            response.data.response.priceHistory !== undefined &&
+            response.data.response.priceHistory !== ""
+          ) {
+            setpriceHistory(response.data.response.priceHistory);
+          }
         }
         setCurrentTimeline(0);
         setloading(false);
@@ -91,6 +107,9 @@ const Home = () => {
         <TimelineStatus currentTimeline={currentTimeline} />
       </div>
       {!loading && Object.keys(data).length > 0 && <PDP data={data} />}
+      {!loading && Object.keys(priceHistory).length > 0 && (
+        <PriceHistory priceHistory={priceHistory} />
+      )}
     </div>
   );
 };

@@ -69,12 +69,12 @@ const TimelineStatus = ({currentTimeline}) => {
           label={
             <span className="timeline-text">
               Almost Completed
-              {currentTimeline >= 3 && currentTimeline <= 9 && "..."}
+              {currentTimeline >= 3 && currentTimeline <= 29 && "..."}
             </span>
           }
           dot={
             currentTimeline >= 3 &&
-            currentTimeline <= 9 && (
+            currentTimeline <= 29 && (
               <SyncOutlined
                 spin
                 style={{
@@ -84,7 +84,7 @@ const TimelineStatus = ({currentTimeline}) => {
               />
             )
           }
-          color={currentTimeline >= 20 ? "red" : "grey"}
+          color={currentTimeline >= 30 ? "red" : "grey"}
         ></Timeline.Item>
       </Timeline>
     </div>
