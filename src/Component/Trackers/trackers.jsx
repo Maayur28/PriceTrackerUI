@@ -199,6 +199,10 @@ const Trackers = () => {
     }
   };
 
+  const openInNewTab = (url) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <>
       {contextHolder}
@@ -260,18 +264,21 @@ const Trackers = () => {
                     onClick={() => handleDelete(val.productId)}
                   />
                   <Meta
+                    style={{ textAlign: "left" }}
                     title={val.title}
                     description={
-                      <div style={{ textAlign: "left" }}>
+                      <div>
                         {val.rating != null &&
-                          val.rating !== undefined &&
-                          val.rating.totalRated != null &&
-                          val.rating.totalRated !== undefined &&
-                          val.rating.totalRated !== "" && (
-                            <Tag color="#2F903B">
-                              {val.rating.ratingCount} | {val.rating.totalRated}
-                            </Tag>
-                          )}
+                        val.rating !== undefined &&
+                        val.rating.totalRated != null &&
+                        val.rating.totalRated !== undefined &&
+                        val.rating.totalRated !== "" ? (
+                          <Tag color="#2F903B">
+                            {val.rating.ratingCount} | {val.rating.totalRated}
+                          </Tag>
+                        ) : (
+                          <Tag color="#C6C6C6">Not Rated</Tag>
+                        )}
                         <div className="pdp-price-container">
                           <Title
                             level={2}
@@ -374,6 +381,7 @@ const Trackers = () => {
                             <div>
                               {val.domain === "FLIPKART" ? (
                                 <Button
+                                  onClick={() => openInNewTab(val.url)}
                                   style={{
                                     margin: "0",
                                     backgroundColor: "#F9DE21",
@@ -385,6 +393,9 @@ const Trackers = () => {
                                 </Button>
                               ) : (
                                 <Button
+                                  onClick={() =>
+                                    openInNewTab(val.url + "&tag=mayur280e-21")
+                                  }
                                   style={{
                                     margin: "0",
                                     backgroundColor: "#FF9900",

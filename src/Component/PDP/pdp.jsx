@@ -81,37 +81,9 @@ const PDP = ({ data }) => {
       }
     }
   };
-
-  const PriceAlertValue = ({ max }) => {
-    const onChange = (newValue) => {
-      setInputValue(newValue);
-    };
-
-    return (
-      <Row style={{ marginLeft: "10px" }}>
-        <Col span={12}>
-          <Slider
-            min={1}
-            max={max - 1}
-            onChange={onChange}
-            value={typeof inputValue === "number" ? inputValue : 1}
-          />
-        </Col>
-        <Col span={4}>
-          <InputNumber
-            addonBefore="₹"
-            min={1}
-            max={max - 1}
-            style={{
-              width: "120px",
-              margin: "0 16px",
-            }}
-            value={inputValue}
-            onChange={onChange}
-          />
-        </Col>
-      </Row>
-    );
+  
+  const onChange = (newValue) => {
+    setInputValue(newValue);
   };
 
   return (
@@ -191,7 +163,31 @@ const PDP = ({ data }) => {
                 closable
               />
             )}
-            <PriceAlertValue max={data.price.discountPrice} />
+            <>
+              <Row style={{ marginLeft: "10px" }}>
+                <Col span={12}>
+                  <Slider
+                    min={1}
+                    max={data.price.discountPrice - 1}
+                    onChange={onChange}
+                    value={typeof inputValue === "number" ? inputValue : 1}
+                  />
+                </Col>
+                <Col span={4}>
+                  <InputNumber
+                    addonBefore="₹"
+                    min={1}
+                    max={data.price.discountPrice - 1}
+                    style={{
+                      width: "120px",
+                      margin: "0 16px",
+                    }}
+                    value={inputValue}
+                    onChange={onChange}
+                  />
+                </Col>
+              </Row>
+            </>
             <Button
               block
               type="primary"
