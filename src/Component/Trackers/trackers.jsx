@@ -263,7 +263,9 @@ const Trackers = () => {
                     title={val.title}
                     description={
                       <div style={{ textAlign: "left" }}>
-                        {val.rating.totalRated != null &&
+                        {val.rating != null &&
+                          val.rating !== undefined &&
+                          val.rating.totalRated != null &&
                           val.rating.totalRated !== undefined &&
                           val.rating.totalRated !== "" && (
                             <Tag color="#2F903B">
