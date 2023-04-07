@@ -5,7 +5,7 @@
   justify-content: center;
   margin-top: 20px;
   width: 99vw;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 .search-component {
   width: 70vw !important;
