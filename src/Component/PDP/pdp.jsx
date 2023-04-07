@@ -81,7 +81,7 @@ const PDP = ({ data }) => {
       }
     }
   };
-  
+
   const onChange = (newValue) => {
     setInputValue(newValue);
   };
@@ -112,38 +112,40 @@ const PDP = ({ data }) => {
                 {data.rating.ratingCount} | {data.rating.totalRated}
               </Tag>
             )}
-          <div className="pdp-price-container">
-            <Title level={2} style={{ margin: "0", marginRight: "10px" }}>
-              ₹{fmt.format(data.price.discountPrice)}
-            </Title>
-            {data.price.discountPrice !== data.price.originalPrice && (
-              <>
-                <Text
-                  type="secondary"
-                  style={{ fontSize: "18px", marginRight: "10px" }}
-                  delete
-                  strong
-                >
-                  ₹{fmt.format(data.price.originalPrice)}
-                </Text>
-                <Title
-                  level={5}
-                  style={{
-                    color: "#07976A",
-                    fontWeight: "bolder",
-                    margin: "0",
-                  }}
-                >
-                  {Math.floor(
-                    ((data.price.originalPrice - data.price.discountPrice) /
-                      data.price.originalPrice) *
-                      100
-                  )}
-                  % off
-                </Title>
-              </>
-            )}
-          </div>
+          {Object.keys(data.price).length > 0 && (
+            <div className="pdp-price-container">
+              <Title level={2} style={{ margin: "0", marginRight: "10px" }}>
+                ₹{fmt.format(data.price.discountPrice)}
+              </Title>
+              {data.price.discountPrice !== data.price.originalPrice && (
+                <>
+                  <Text
+                    type="secondary"
+                    style={{ fontSize: "18px", marginRight: "10px" }}
+                    delete
+                    strong
+                  >
+                    ₹{fmt.format(data.price.originalPrice)}
+                  </Text>
+                  <Title
+                    level={5}
+                    style={{
+                      color: "#07976A",
+                      fontWeight: "bolder",
+                      margin: "0",
+                    }}
+                  >
+                    {Math.floor(
+                      ((data.price.originalPrice - data.price.discountPrice) /
+                        data.price.originalPrice) *
+                        100
+                    )}
+                    % off
+                  </Title>
+                </>
+              )}
+            </div>
+          )}
           <Space direction="vertical" wrap className="pdp-button-container">
             <Button block onClick={() => openInNewTab(data.url)}>
               BUY ON {data.domain}

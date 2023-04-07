@@ -283,46 +283,48 @@ const Trackers = () => {
                           ) : (
                             <Tag color="#C6C6C6">Not Rated</Tag>
                           )}
-                          <div className="pdp-price-container">
-                            <Title
-                              level={2}
-                              style={{ margin: "0", marginRight: "5px" }}
-                            >
-                              ₹{fmt.format(val.price.discountPrice)}
-                            </Title>
-                            {val.price.discountPrice !==
-                              val.price.originalPrice && (
-                              <>
-                                <Text
-                                  type="secondary"
-                                  style={{
-                                    fontSize: "18px",
-                                    marginRight: "5px",
-                                  }}
-                                  delete
-                                  strong
-                                >
-                                  ₹{fmt.format(val.price.originalPrice)}
-                                </Text>
-                                <Title
-                                  level={5}
-                                  style={{
-                                    color: "#07976A",
-                                    fontWeight: "bolder",
-                                    margin: "0",
-                                  }}
-                                >
-                                  {Math.floor(
-                                    ((val.price.originalPrice -
-                                      val.price.discountPrice) /
-                                      val.price.originalPrice) *
-                                      100
-                                  )}
-                                  % off
-                                </Title>
-                              </>
-                            )}
-                          </div>
+                          {Object.keys(val.price).length > 0 && (
+                            <div className="pdp-price-container">
+                              <Title
+                                level={2}
+                                style={{ margin: "0", marginRight: "5px" }}
+                              >
+                                ₹{fmt.format(val.price.discountPrice)}
+                              </Title>
+                              {val.price.discountPrice !==
+                                val.price.originalPrice && (
+                                <>
+                                  <Text
+                                    type="secondary"
+                                    style={{
+                                      fontSize: "18px",
+                                      marginRight: "5px",
+                                    }}
+                                    delete
+                                    strong
+                                  >
+                                    ₹{fmt.format(val.price.originalPrice)}
+                                  </Text>
+                                  <Title
+                                    level={5}
+                                    style={{
+                                      color: "#07976A",
+                                      fontWeight: "bolder",
+                                      margin: "0",
+                                    }}
+                                  >
+                                    {Math.floor(
+                                      ((val.price.originalPrice -
+                                        val.price.discountPrice) /
+                                        val.price.originalPrice) *
+                                        100
+                                    )}
+                                    % off
+                                  </Title>
+                                </>
+                              )}
+                            </div>
+                          )}
                           <div>
                             <Divider style={{ margin: "10px" }}>
                               Alert Price & Buy On
