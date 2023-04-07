@@ -400,7 +400,7 @@ const Trackers = () => {
                                   <Button
                                     onClick={() =>
                                       openInNewTab(
-                                        val.url + "&tag=mayur280e-21"
+                                        val.url + "?tag=mayur280e-21"
                                       )
                                     }
                                     style={{

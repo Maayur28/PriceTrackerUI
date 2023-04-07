@@ -1,6 +1,7 @@
 .pdp-container {
   display: flex;
   width: 80vw;
+  height: 65vh;
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
