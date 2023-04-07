@@ -112,7 +112,7 @@ const PDP = ({ data }) => {
                 {data.rating.ratingCount} | {data.rating.totalRated}
               </Tag>
             )}
-          {Object.keys(data.price).length > 0 && (
+          {Object.keys(data.price).length > 0 ? (
             <div className="pdp-price-container">
               <Title level={2} style={{ margin: "0", marginRight: "10px" }}>
                 ₹{fmt.format(data.price.discountPrice)}
@@ -145,12 +145,24 @@ const PDP = ({ data }) => {
                 </>
               )}
             </div>
+          ) : (
+            <div className="pdp-price-container">
+              <Text
+                type="secondary"
+                style={{ fontSize: "16px", marginRight: "10px" }}
+                strong
+              >
+                Price Not Available
+              </Text>
+            </div>
           )}
           <Space direction="vertical" wrap className="pdp-button-container">
             <Button block onClick={() => openInNewTab(data.url)}>
               BUY ON {data.domain}
             </Button>
-            <Divider>Set Price Alert</Divider>
+            {Object.keys(data.price).length > 0 && (
+              <Divider>Set Price Alert</Divider>
+            )}
             {addedTracker && (
               <Alert
                 message="Confirmation of tracker has been sent over mail.
@@ -165,43 +177,45 @@ const PDP = ({ data }) => {
                 closable
               />
             )}
-            <>
-              <Row style={{ marginLeft: "10px" }}>
-                <Col span={12}>
-                  <Slider
-                    min={1}
-                    max={data.price.discountPrice - 1}
-                    onChange={onChange}
-                    value={typeof inputValue === "number" ? inputValue : 1}
-                  />
-                </Col>
-                <Col span={4}>
-                  <InputNumber
-                    addonBefore="₹"
-                    min={1}
-                    max={data.price.discountPrice - 1}
-                    style={{
-                      width: "120px",
-                      margin: "0 16px",
-                    }}
-                    value={inputValue}
-                    onChange={onChange}
-                  />
-                </Col>
-              </Row>
-            </>
-            <Button
-              block
-              type="primary"
-              style={{ backgroundColor: "#EB2F96" }}
-              onClick={handlePriceAlert}
-              loading={loading}
-            >
-              SET PRICE ALERT
-            </Button>
-            <Text type="secondary">
-              We will notify you on email as soon as the price drops
-            </Text>
+            {Object.keys(data.price).length > 0 && (
+              <>
+                <Row style={{ marginLeft: "10px" }}>
+                  <Col span={12}>
+                    <Slider
+                      min={1}
+                      max={data.price.discountPrice - 1}
+                      onChange={onChange}
+                      value={typeof inputValue === "number" ? inputValue : 1}
+                    />
+                  </Col>
+                  <Col span={4}>
+                    <InputNumber
+                      addonBefore="₹"
+                      min={1}
+                      max={data.price.discountPrice - 1}
+                      style={{
+                        width: "120px",
+                        margin: "0 16px",
+                      }}
+                      value={inputValue}
+                      onChange={onChange}
+                    />
+                  </Col>
+                </Row>
+                <Button
+                  block
+                  type="primary"
+                  style={{ backgroundColor: "#EB2F96" }}
+                  onClick={handlePriceAlert}
+                  loading={loading}
+                >
+                  SET PRICE ALERT
+                </Button>
+                <Text type="secondary">
+                  We will notify you on email as soon as the price drops
+                </Text>
+              </>
+            )}
           </Space>
         </div>
       </div>
