@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Chart from "react-apexcharts";
+import { Segmented } from "antd";
 import "./priceHistory.css";
 
 const PriceHistory = ({ priceHistory }) => {
+  const [current, setcurrent] = useState("line");
+
   const options = {
     xaxis: {
       categories: priceHistory.dates,
@@ -16,12 +19,14 @@ const PriceHistory = ({ priceHistory }) => {
   ];
   return (
     <div className="price_history-container">
-      <Chart
-        options={options}
-        series={series}
-        type="bar"
-        height={300}
+      <Segmented
+        style={{ marginBottom: "50px" }}
+        block
+        onChange={(value) => setcurrent(value)}
+        defaultValue={current}
+        options={["bar", "line", "area"]}
       />
+      <Chart options={options} series={series} type={current} height={300} />
     </div>
   );
 };

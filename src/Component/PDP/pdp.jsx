@@ -19,6 +19,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import fmt from "indian-number-format";
+import Paragraph from "antd/es/typography/Paragraph";
 
 const { Title, Text } = Typography;
 
@@ -102,9 +103,12 @@ const PDP = ({ data }) => {
           )}
         </div>
         <div className="pdp-content-container">
-          <Title level={3} style={{ margin: "0" }}>
+          <Paragraph
+            ellipsis={true}
+            style={{ margin: "0", fontSize: "18px", fontWeight: "bolder" }}
+          >
             {data.title}
-          </Title>
+          </Paragraph>
           {data.rating.totalRated != null &&
             data.rating.totalRated !== undefined &&
             data.rating.totalRated !== "" && (
