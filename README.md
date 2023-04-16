@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+<br />
+<p align="center">
+    <img src="https://res.cloudinary.com/mayur28/image/upload/v1680331147/pricetracker-high-resolution-logo-color-on-transparent-background_tmy5iy.png" alt="Logo" width="150" height="80">
+  <h3 align="center">Price Tracker</h3>
+  <h6 align="center">Because Every Rupee Matters</h6>
+  <p align="center">
+   A clean and easy-to-use web experience!
+    <br />
+    <a href="https://www.trackprice.co.in/"><strong>View Website»</strong></a>
+    <br />
+  </p>
+</p>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#run-the-development-server">Run the development server</a></li>
+      </ul>
+    </li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
 
-## Available Scripts
+## About The Project
 
-In the project directory, you can run:
+![PriceTracker](https://res.cloudinary.com/mayur28/image/upload/v1681217885/PriceTrackerResponsive_oljyzt.png))
 
-### `npm start`
+As you have already know from my [portfolio](https://www.mayuragarwal.in/) that my focussed is on creating the user-friendly websites that deliver over the top experience. It delivers clean and easy-to-use user-experience with excellent responsiveness. Some key points which I keep in mind while developing the projects:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Must provide clean and easy-to-use experience.
+- Must provide better responsiveness for all screen sizes.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Features
 
-### `npm test`
+- Built a full-stack web app to buy the products at minimum price and also provides attractive and user-friendly interface.
+- Added the paste the link feature which provides ease of use.
+- Added the chart to provide easy way to know the history of prices for that product.
+- Used React.js, Node.js, Express.js and MongoDB.
+- Utilized Ant-Design for better visualization.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Built With
 
-### `npm run build`
+This section should list any major frameworks that you built your project using.Here are a few examples.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- [React.js](https://reactjs.org/)
+- [Ant Design](https://ant.design/)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Getting Started
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This is an example of how you may give instructions on setting up your project locally.
+To get a local copy up and running follow these simple example steps.
 
-### `npm run eject`
+### Prerequisites
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This is an example of how to list things you need to use the software and how to install them.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- npm
+  ```sh
+  npm install
+  ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Run the development server
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+This is an example of how you may give instructions on setting up your project locally.
+To get a local copy up and running follow these simple example steps.
 
-## Learn More
+First, run the development server:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npm start
+# or
+yarn start
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### Code Splitting
+You can start editing the page by modifying `src/app.js`. The page auto-updates as you edit the file.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Contact
 
-### Analyzing the Bundle Size
+Connect with me - [drop message](https://www.trackprice.co.in/contact)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Portfolio Link: [Portfolio](https://www.mayuragarwal.in/)
