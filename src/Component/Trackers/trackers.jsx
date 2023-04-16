@@ -29,13 +29,15 @@ const { Title, Text } = Typography;
 
 const Trackers = () => {
   const containerWidth = window.innerWidth;
-  console.log(containerWidth);
   const [messageApi, contextHolder] = message.useMessage();
+  const [priceHistoryCalled, setPriceHistoryCalled] = useState(false);
+
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [edit, setEdit] = useState("");
   const [data, setData] = useState([]);
+  const [priceHistoryData, setPriceHistoryData] = useState([]);
   const [deleteLoading, setDeleteLoading] = useState("");
   const [alertPrice, setalertPrice] = useState(0);
 
@@ -87,10 +89,79 @@ const Trackers = () => {
     }
   };
 
+  const getUrlsList = () => {
+    let urlList = [];
+    data.forEach((element) => {
+      urlList.push(element.url);
+    });
+    let urls = {
+      urls: urlList,
+    };
+    return urls;
+  };
+
+  const fetchPriceHistory = async () => {
+    if (
+      Cookies.get("accessToken") === undefined ||
+      Cookies.get("refreshToken") === undefined
+    ) {
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      messageApi.open({
+        type: "error",
+        content: "Login to view trackers",
+      });
+      navigate("/login");
+    } else {
+      let urlList = getUrlsList();
+      try {
+        const response = await axios.post(
+          "https://stingray-app-omwgg.ondigitalocean.app/getPriceHistoryUrls",
+          //"http://localhost:9000/getPriceHistoryUrls",
+          urlList,
+          {
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            },
+          }
+        );
+        if (
+          response.status === 200 &&
+          response.data != null &&
+          response.data !== undefined &&
+          response.data !== ""
+        ) {
+          if (response.data) {
+            setPriceHistoryData(response.data.data);
+          }
+        }
+      } catch (error) {
+        messageApi.open({
+          type: "error",
+          content: error.response.data,
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     fetchTracker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (
+      !loading &&
+      !priceHistoryCalled &&
+      data != null &&
+      data !== undefined &&
+      data.length > 0
+    ) {
+      setPriceHistoryCalled(true);
+      fetchPriceHistory();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const handleAlertPrice = async () => {
     if (
@@ -105,6 +176,7 @@ const Trackers = () => {
       });
     } else {
       if (alertPrice > 0) {
+        setPriceHistoryCalled(false);
         setbuttonLoading(true);
         try {
           let obj = {};
@@ -168,6 +240,7 @@ const Trackers = () => {
     } else {
       try {
         setDeleteLoading(productId);
+        setPriceHistoryCalled(false);
         let obj = {};
         obj.productId = productId;
         obj.accessToken = Cookies.get("accessToken");
@@ -273,15 +346,11 @@ const Trackers = () => {
                             : containerWidth > 900 && containerWidth <= 1200
                             ? "400px"
                             : "30vw",
-                        height: 455,
+                        height: 490,
                         margin: "15px",
                       }}
                       actions={[
-                        <Button
-                          type="text"
-                          style={{ width: "90%", maxWidth: "100px" }}
-                          icon={<LineChartOutlined />}
-                        >
+                        <Button type="text" icon={<LineChartOutlined />}>
                           History
                         </Button>,
                         <>
@@ -290,11 +359,7 @@ const Trackers = () => {
                             content={content(val)}
                             title="Update Alert Price"
                           >
-                            <Button
-                              type="text"
-                              style={{ width: "90%", maxWidth: "120px" }}
-                              icon={<EditOutlined />}
-                            >
+                            <Button type="text" icon={<EditOutlined />}>
                               Alert Price
                             </Button>
                           </Popover>
@@ -306,19 +371,8 @@ const Trackers = () => {
                             maxWidth: "120px",
                           }}
                           onClick={() => openInNewTab(val.url)}
-                          icon={
-                            <Image
-                              style={{ margin: "0", paddingRight: "6px" }}
-                              preview={false}
-                              src={
-                                val.domain === "FLIPKART"
-                                  ? "/flipkart.png"
-                                  : "/amazon.png"
-                              }
-                            />
-                          }
                         >
-                          {val.domain}
+                          <Text strong>{val.domain}</Text>
                         </Button>,
                       ]}
                       cover={
@@ -397,101 +451,39 @@ const Trackers = () => {
                                 )}
                               </div>
                             )}
-                            {/* <div>
-                              <Divider style={{ margin: "10px" }}>
-                                Alert Price & Buy On
-                              </Divider>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-evenly",
-                                  alignItems: "flex-start",
-                                }}
-                              >
-                                <Space.Compact
-                                  style={{
-                                    width: "70%",
-                                    minWidth: "150px",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <Form.Item>
-                                    <InputNumber
-                                      name="alertPrice"
-                                      addonBefore="₹"
-                                      min={1}
-                                      max={val.price.discountPrice - 1}
-                                      value={val.alertPrice}
-                                      readOnly={val.productId !== edit}
-                                      onChange={(value) => setalertPrice(value)}
-                                    />
-                                  </Form.Item>
-                                  <Form.Item>
-                                    {edit === val.productId ? (
-                                      <Button
-                                        icon={<CheckOutlined />}
-                                        size="smmall"
-                                        style={{
-                                          color: "white",
-                                          backgroundColor: "#7F4574",
-                                        }}
-                                        type="primary"
-                                        onClick={handleAlertPrice}
-                                        disabled={
-                                          alertPrice === 0 ||
-                                          alertPrice === val.alertPrice
-                                        }
-                                        loading={buttonLoading}
-                                      >
-                                        Update
-                                      </Button>
-                                    ) : (
-                                      <Button
-                                        icon={<EditOutlined />}
-                                        size="smmall"
-                                        onClick={() =>
-                                          handleEdit(val.productId)
-                                        }
-                                      >
-                                        Edit
-                                      </Button>
-                                    )}
-                                  </Form.Item>
-                                </Space.Compact>
-                                <div>
-                                  {val.domain === "FLIPKART" ? (
-                                    <Button
-                                      onClick={() => openInNewTab(val.url)}
-                                      style={{
-                                        margin: "0",
-                                        backgroundColor: "#F9DE21",
-                                        color: "#107BD4",
-                                        fontWeight: "bolder",
-                                      }}
-                                    >
-                                      {val.domain}
-                                    </Button>
-                                  ) : (
-                                    <Button
-                                      onClick={() =>
-                                        openInNewTab(
-                                          val.url + "?tag=mayur280e-21"
-                                        )
+                            {priceHistoryData != null &&
+                              priceHistoryData !== undefined &&
+                              priceHistoryData.length > 0 && (
+                                <div style={{ marginTop: "10px" }}>
+                                  <Space size={[0, "small"]}>
+                                    <Tag bordered={false} color="green">
+                                      MinPrice:
+                                      {
+                                        priceHistoryData.find((x) =>
+                                          val.url.includes(x.url)
+                                        ).minimumPrice
                                       }
-                                      style={{
-                                        margin: "0",
-                                        backgroundColor: "#FF9900",
-                                        color: "white",
-                                        fontWeight: "bolder",
-                                      }}
-                                    >
-                                      {val.domain}
-                                    </Button>
-                                  )}
+                                    </Tag>
+
+                                    <Tag bordered={false} color="blue">
+                                      CurPrice:
+                                      {
+                                        priceHistoryData.find((x) =>
+                                          val.url.includes(x.url)
+                                        ).currentPrice
+                                      }
+                                    </Tag>
+                                    <Tag bordered={false} color="red">
+                                      MaxPrice:
+                                      {
+                                        priceHistoryData.find((x) =>
+                                          val.url.includes(x.url)
+                                        ).maximumPrice
+                                      }
+                                    </Tag>
+                                  </Space>
                                 </div>
-                              </div>
-                            </div> */}
+                              )}
                           </div>
                         }
                       />
