@@ -119,23 +119,36 @@ const Home = () => {
           Paste
         </Button>
       </div>
-      <div
-        className="timeline-container"
-        style={{
-          visibility: `${loading ? "visible" : "hidden"}`,
-          display: `${
-            !loading && Object.keys(data).length > 0 ? "none" : "block"
-          }`,
-        }}
-      >
-        <TimelineStatus currentTimeline={currentTimeline} />
-      </div>
-      <div>
-        {!loading && Object.keys(data).length > 0 && <PDP data={data} />}
-        {!loading && Object.keys(priceHistory).length > 0 && (
-          <PriceHistory priceHistory={priceHistory} />
-        )}
-      </div>
+      {!loading && Object.keys(priceHistory).length === 0 ? (
+        <div>
+          <Image
+            width="100vw"
+            height={window.innerHeight - 280}
+            preview={false}
+            src="/wave.png"
+          />
+        </div>
+      ) : (
+        <>
+          <div
+            className="timeline-container"
+            style={{
+              visibility: `${loading ? "visible" : "hidden"}`,
+              display: `${
+                !loading && Object.keys(data).length > 0 ? "none" : "block"
+              }`,
+            }}
+          >
+            <TimelineStatus currentTimeline={currentTimeline} />
+          </div>
+          <div>
+            {!loading && Object.keys(data).length > 0 && <PDP data={data} />}
+            {!loading && Object.keys(priceHistory).length > 0 && (
+              <PriceHistory priceHistory={priceHistory} />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
