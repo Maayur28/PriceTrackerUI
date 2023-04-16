@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Input, Image, message, Button } from "antd";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import "./home.css";
 import TimelineStatus from "../TimelineStatus/timelineStatus";
@@ -9,6 +10,7 @@ import { SnippetsOutlined } from "@ant-design/icons";
 const { Search } = Input;
 
 const Home = () => {
+  const [searchParams] = useSearchParams();
   const [loading, setloading] = useState(false);
   const [currentTimeline, setCurrentTimeline] = useState(0);
   const [currentIntervalTime, setCurrentIntervalTime] = useState(1000);
@@ -24,12 +26,25 @@ const Home = () => {
     if (loading) {
       const interval = setInterval(() => {
         setCurrentTimeline(currentTimeline + 1);
-        setCurrentIntervalTime(Math.floor((Math.random() + 0.5) * 500));
+        setCurrentIntervalTime(Math.floor((Math.random() + 1) * 500));
       }, currentIntervalTime);
 
       return () => clearInterval(interval);
     }
   }, [currentIntervalTime, currentTimeline, loading]);
+
+  useEffect(() => {
+    if (
+      searchParams != null &&
+      searchParams !== undefined &&
+      searchParams.get("url") !== undefined &&
+      searchParams.get("url") !== ""
+    ) {
+      setSearchValue(searchParams.get("url"));
+      onSearch(searchParams.get("url"));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const validateURL = (val) => {
     var res = val.match(

@@ -350,7 +350,11 @@ const Trackers = () => {
                         margin: "15px",
                       }}
                       actions={[
-                        <Button type="text" icon={<LineChartOutlined />}>
+                        <Button
+                          onClick={() => navigate(`/?url=${val.url}`)}
+                          type="text"
+                          icon={<LineChartOutlined />}
+                        >
                           History
                         </Button>,
                         <>
