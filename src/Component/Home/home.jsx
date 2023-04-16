@@ -120,6 +120,7 @@ const Home = () => {
           allowClear
           loading={loading}
           size="large"
+          enterButton="Search"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           onSearch={onSearch}

@@ -24,9 +24,9 @@
 .paste-wrap {
   background: linear-gradient(
       54.09deg,
-      #7F4574 2.03%,
-      #EF85D1 48.63%,
-      #E04CB6 96.22%
+      #7f4574 2.03%,
+      #ef85d1 48.63%,
+      #e04cb6 96.22%
     ),
     linear-gradient(0deg, rgba(201, 46, 255, 0.15), rgba(201, 46, 255, 0.15));
   box-sizing: border-box;
@@ -34,4 +34,8 @@
   height: 40px;
   width: 80px !important;
   text-align: center;
+}
+.ant-input-search-button {
+  background-color: #7f4574 !important;
+  color: white;
 }
