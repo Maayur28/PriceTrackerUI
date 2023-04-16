@@ -7,16 +7,20 @@ import {
   Card,
   Typography,
   Tag,
-  Divider,
   InputNumber,
   Space,
   Button,
   Form,
-  Skeleton,
   Image,
   Spin,
+  Popover,
 } from "antd";
-import { CloseOutlined, CheckOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  CheckOutlined,
+  EditOutlined,
+  LineChartOutlined,
+} from "@ant-design/icons";
 import fmt from "indian-number-format";
 import "./trackers.css";
 
@@ -206,252 +210,324 @@ const Trackers = () => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  const content = (val) => (
+    <Space.Compact style={{ width: "220px" }}>
+      <Form.Item>
+        <InputNumber
+          name="alertPrice"
+          addonBefore="₹"
+          min={1}
+          max={val.price.discountPrice - 1}
+          value={val.alertPrice}
+          readOnly={val.productId !== edit}
+          onChange={(value) => setalertPrice(value)}
+        />
+      </Form.Item>
+      <Form.Item>
+        {edit === val.productId ? (
+          <Button
+            icon={<CheckOutlined />}
+            size="smmall"
+            style={{
+              color: "white",
+              backgroundColor: "#7F4574",
+            }}
+            type="primary"
+            onClick={handleAlertPrice}
+            disabled={alertPrice === 0 || alertPrice === val.alertPrice}
+            loading={buttonLoading}
+          >
+            Update
+          </Button>
+        ) : (
+          <Button
+            icon={<EditOutlined />}
+            size="smmall"
+            onClick={() => handleEdit(val.productId)}
+          >
+            Edit
+          </Button>
+        )}
+      </Form.Item>
+    </Space.Compact>
+  );
+
   return (
     <>
       {contextHolder}
-      <div className="trackers-container">
-        {loading ? (
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-            }}
-          >
-            <Skeleton.Input
-              active={true}
-              style={{ width: "30vw", height: "400px", margin: "5px" }}
-            />
-            <Skeleton.Input
-              active={true}
-              style={{ width: "30vw", height: "400px", margin: "5px" }}
-            />
-            <Skeleton.Input
-              active={true}
-              style={{ width: "30vw", height: "400px", margin: "5px" }}
-            />
-          </div>
-        ) : (
-          <>
-            {data != null && data !== undefined && data.length > 0 ? (
-              data.map((val, index) => (
-                <Spin spinning={deleteLoading === val.productId}>
-                  <Card
-                    key={`tracker${index}`}
-                    style={{
-                      width:
-                        containerWidth <= 650
-                          ? "90vw"
-                          : containerWidth > 650 && containerWidth <= 900
-                          ? "44vw"
-                          : containerWidth > 900 && containerWidth <= 1200
-                          ? "400px"
-                          : "30vw",
-                      height: 460,
-                      margin: "15px",
-                    }}
-                    cover={
-                      <img
-                        alt="product_image"
-                        src={val.image}
-                        style={{
-                          textAlign: "center",
-                          padding: "10px",
-                          width: "280px",
-                          height: "220px",
-                        }}
-                      />
-                    }
-                  >
-                    <CloseOutlined
-                      className="tracker-close-button"
-                      onClick={() => handleDelete(val.productId)}
-                    />
-                    <Meta
-                      style={{ textAlign: "left" }}
-                      title={val.title}
-                      description={
-                        <div>
-                          {val.rating != null &&
-                          val.rating !== undefined &&
-                          val.rating.totalRated != null &&
-                          val.rating.totalRated !== undefined &&
-                          val.rating.totalRated !== "" ? (
-                            <Tag color="#2F903B">
-                              {val.rating.ratingCount} | {val.rating.totalRated}
-                            </Tag>
-                          ) : (
-                            <Tag color="#C6C6C6">Not Rated</Tag>
-                          )}
-                          {Object.keys(val.price).length > 0 && (
-                            <div className="pdp-price-container">
-                              <Title
-                                level={2}
-                                style={{ margin: "0", marginRight: "5px" }}
-                              >
-                                ₹{fmt.format(val.price.discountPrice)}
-                              </Title>
-                              {val.price.discountPrice !==
-                                val.price.originalPrice && (
-                                <>
-                                  <Text
-                                    type="secondary"
-                                    style={{
-                                      fontSize: "18px",
-                                      marginRight: "5px",
-                                    }}
-                                    delete
-                                    strong
-                                  >
-                                    ₹{fmt.format(val.price.originalPrice)}
-                                  </Text>
-                                  <Title
-                                    level={5}
-                                    style={{
-                                      color: "#07976A",
-                                      fontWeight: "bolder",
-                                      margin: "0",
-                                    }}
-                                  >
-                                    {Math.floor(
-                                      ((val.price.originalPrice -
-                                        val.price.discountPrice) /
-                                        val.price.originalPrice) *
-                                        100
-                                    )}
-                                    % off
-                                  </Title>
-                                </>
-                              )}
-                            </div>
-                          )}
-                          <div>
-                            <Divider style={{ margin: "10px" }}>
-                              Alert Price & Buy On
-                            </Divider>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-evenly",
-                                alignItems: "flex-start",
-                              }}
+      <Spin tip="Loading..." spinning={loading}>
+        <div className="trackers-container">
+          {!loading && (
+            <>
+              {data != null && data !== undefined && data.length > 0 ? (
+                data.map((val, index) => (
+                  <Spin spinning={deleteLoading === val.productId}>
+                    <Card
+                      key={`tracker${index}`}
+                      style={{
+                        width:
+                          containerWidth <= 650
+                            ? "90vw"
+                            : containerWidth > 650 && containerWidth <= 900
+                            ? "44vw"
+                            : containerWidth > 900 && containerWidth <= 1200
+                            ? "400px"
+                            : "30vw",
+                        height: 455,
+                        margin: "15px",
+                      }}
+                      actions={[
+                        <Button
+                          type="text"
+                          style={{ width: "90%", maxWidth: "100px" }}
+                          icon={<LineChartOutlined />}
+                        >
+                          History
+                        </Button>,
+                        <>
+                          <Popover
+                            trigger="click"
+                            content={content(val)}
+                            title="Update Alert Price"
+                          >
+                            <Button
+                              type="text"
+                              style={{ width: "90%", maxWidth: "120px" }}
+                              icon={<EditOutlined />}
                             >
-                              <Space.Compact
+                              Alert Price
+                            </Button>
+                          </Popover>
+                        </>,
+                        <Button
+                          type="text"
+                          style={{
+                            width: "90%",
+                            maxWidth: "120px",
+                          }}
+                          onClick={() => openInNewTab(val.url)}
+                          icon={
+                            <Image
+                              style={{ margin: "0", paddingRight: "6px" }}
+                              preview={false}
+                              src={
+                                val.domain === "FLIPKART"
+                                  ? "/flipkart.png"
+                                  : "/amazon.png"
+                              }
+                            />
+                          }
+                        >
+                          {val.domain}
+                        </Button>,
+                      ]}
+                      cover={
+                        <img
+                          alt="product_image"
+                          src={val.image}
+                          style={{
+                            textAlign: "center",
+                            padding: "10px",
+                            width: "280px",
+                            height: "220px",
+                          }}
+                        />
+                      }
+                    >
+                      <CloseOutlined
+                        className="tracker-close-button"
+                        onClick={() => handleDelete(val.productId)}
+                      />
+                      <Meta
+                        style={{ textAlign: "left" }}
+                        title={val.title}
+                        description={
+                          <div>
+                            {val.rating != null &&
+                            val.rating !== undefined &&
+                            val.rating.totalRated != null &&
+                            val.rating.totalRated !== undefined &&
+                            val.rating.totalRated !== "" ? (
+                              <Tag color="#2F903B">
+                                {val.rating.ratingCount} |{" "}
+                                {val.rating.totalRated}
+                              </Tag>
+                            ) : (
+                              <Tag color="#C6C6C6">Not Rated</Tag>
+                            )}
+                            {Object.keys(val.price).length > 0 && (
+                              <div className="pdp-price-container">
+                                <Title
+                                  level={2}
+                                  style={{ margin: "0", marginRight: "5px" }}
+                                >
+                                  ₹{fmt.format(val.price.discountPrice)}
+                                </Title>
+                                {val.price.discountPrice !==
+                                  val.price.originalPrice && (
+                                  <>
+                                    <Text
+                                      type="secondary"
+                                      style={{
+                                        fontSize: "18px",
+                                        marginRight: "5px",
+                                      }}
+                                      delete
+                                      strong
+                                    >
+                                      ₹{fmt.format(val.price.originalPrice)}
+                                    </Text>
+                                    <Title
+                                      level={5}
+                                      style={{
+                                        color: "#07976A",
+                                        fontWeight: "bolder",
+                                        margin: "0",
+                                      }}
+                                    >
+                                      {Math.floor(
+                                        ((val.price.originalPrice -
+                                          val.price.discountPrice) /
+                                          val.price.originalPrice) *
+                                          100
+                                      )}
+                                      % off
+                                    </Title>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                            {/* <div>
+                              <Divider style={{ margin: "10px" }}>
+                                Alert Price & Buy On
+                              </Divider>
+                              <div
                                 style={{
-                                  width: "70%",
-                                  minWidth: "150px",
                                   display: "flex",
-                                  justifyContent: "center",
+                                  justifyContent: "space-evenly",
+                                  alignItems: "flex-start",
                                 }}
                               >
-                                <Form.Item>
-                                  <InputNumber
-                                    name="alertPrice"
-                                    addonBefore="₹"
-                                    min={1}
-                                    max={val.price.discountPrice - 1}
-                                    value={val.alertPrice}
-                                    readOnly={val.productId !== edit}
-                                    onChange={(value) => setalertPrice(value)}
-                                  />
-                                </Form.Item>
-                                <Form.Item>
-                                  {edit === val.productId ? (
+                                <Space.Compact
+                                  style={{
+                                    width: "70%",
+                                    minWidth: "150px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <Form.Item>
+                                    <InputNumber
+                                      name="alertPrice"
+                                      addonBefore="₹"
+                                      min={1}
+                                      max={val.price.discountPrice - 1}
+                                      value={val.alertPrice}
+                                      readOnly={val.productId !== edit}
+                                      onChange={(value) => setalertPrice(value)}
+                                    />
+                                  </Form.Item>
+                                  <Form.Item>
+                                    {edit === val.productId ? (
+                                      <Button
+                                        icon={<CheckOutlined />}
+                                        size="smmall"
+                                        style={{
+                                          color: "white",
+                                          backgroundColor: "#7F4574",
+                                        }}
+                                        type="primary"
+                                        onClick={handleAlertPrice}
+                                        disabled={
+                                          alertPrice === 0 ||
+                                          alertPrice === val.alertPrice
+                                        }
+                                        loading={buttonLoading}
+                                      >
+                                        Update
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        icon={<EditOutlined />}
+                                        size="smmall"
+                                        onClick={() =>
+                                          handleEdit(val.productId)
+                                        }
+                                      >
+                                        Edit
+                                      </Button>
+                                    )}
+                                  </Form.Item>
+                                </Space.Compact>
+                                <div>
+                                  {val.domain === "FLIPKART" ? (
                                     <Button
-                                      icon={<CheckOutlined />}
-                                      size="smmall"
+                                      onClick={() => openInNewTab(val.url)}
                                       style={{
-                                        color: "white",
-                                        backgroundColor: "#7F4574",
+                                        margin: "0",
+                                        backgroundColor: "#F9DE21",
+                                        color: "#107BD4",
+                                        fontWeight: "bolder",
                                       }}
-                                      type="primary"
-                                      onClick={handleAlertPrice}
-                                      disabled={
-                                        alertPrice === 0 ||
-                                        alertPrice === val.alertPrice
-                                      }
-                                      loading={buttonLoading}
                                     >
-                                      Update
+                                      {val.domain}
                                     </Button>
                                   ) : (
                                     <Button
-                                      icon={<EditOutlined />}
-                                      size="smmall"
-                                      onClick={() => handleEdit(val.productId)}
+                                      onClick={() =>
+                                        openInNewTab(
+                                          val.url + "?tag=mayur280e-21"
+                                        )
+                                      }
+                                      style={{
+                                        margin: "0",
+                                        backgroundColor: "#FF9900",
+                                        color: "white",
+                                        fontWeight: "bolder",
+                                      }}
                                     >
-                                      Edit
+                                      {val.domain}
                                     </Button>
                                   )}
-                                </Form.Item>
-                              </Space.Compact>
-                              <div>
-                                {val.domain === "FLIPKART" ? (
-                                  <Button
-                                    onClick={() => openInNewTab(val.url)}
-                                    style={{
-                                      margin: "0",
-                                      backgroundColor: "#F9DE21",
-                                      color: "#107BD4",
-                                      fontWeight: "bolder",
-                                    }}
-                                  >
-                                    {val.domain}
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    onClick={() =>
-                                      openInNewTab(
-                                        val.url + "?tag=mayur280e-21"
-                                      )
-                                    }
-                                    style={{
-                                      margin: "0",
-                                      backgroundColor: "#FF9900",
-                                      color: "white",
-                                      fontWeight: "bolder",
-                                    }}
-                                  >
-                                    {val.domain}
-                                  </Button>
-                                )}
+                                </div>
                               </div>
-                            </div>
+                            </div> */}
                           </div>
-                        </div>
-                      }
-                    />
-                  </Card>
-                </Spin>
-              ))
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%",
-                  height: "70vh",
-                }}
-              >
-                <Image
-                  preview={false}
-                  src="/empty-cart.gif"
-                  width="60vw"
-                  height="40vh"
-                />
-                <Text style={{ fontSize: "40px", fontWeight: "bolder" }}>
-                  Your tracking list is empty
-                </Text>
-                <Text style={{ fontSize: "24px", fontWeight: "400" }}>
-                  Looks like you have not added anything to your tracking list.
-                </Text>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+                        }
+                      />
+                    </Card>
+                  </Spin>
+                ))
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    height: "70vh",
+                  }}
+                >
+                  <Image
+                    preview={false}
+                    src="/empty-cart.gif"
+                    width="60vw"
+                    height="40vh"
+                  />
+                  <Text style={{ fontSize: "40px", fontWeight: "bolder" }}>
+                    Your tracking list is empty
+                  </Text>
+                  <Text style={{ fontSize: "24px", fontWeight: "400" }}>
+                    Looks like you have not added anything to your tracking
+                    list.
+                  </Text>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </Spin>
     </>
   );
 };
