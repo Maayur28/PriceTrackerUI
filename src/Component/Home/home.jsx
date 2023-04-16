@@ -157,7 +157,12 @@ const Home = () => {
             <TimelineStatus currentTimeline={currentTimeline} />
           </div>
           <div>
-            {!loading && Object.keys(data).length > 0 && <PDP data={data} />}
+            {!loading && Object.keys(data).length > 0 && (
+              <PDP
+                searchParam={searchParams && searchParams.get("url")}
+                data={data}
+              />
+            )}
             {!loading && Object.keys(priceHistory).length > 0 && (
               <PriceHistory priceHistory={priceHistory} />
             )}

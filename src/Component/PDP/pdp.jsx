@@ -23,7 +23,8 @@ import Paragraph from "antd/es/typography/Paragraph";
 
 const { Title, Text } = Typography;
 
-const PDP = ({ data }) => {
+const PDP = ({ searchParam, data }) => {
+  console.log(searchParam);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState(1);
@@ -164,9 +165,10 @@ const PDP = ({ data }) => {
             <Button block onClick={() => openInNewTab(data.url)}>
               BUY ON {data.domain}
             </Button>
-            {Object.keys(data.price).length > 0 && (
-              <Divider>Set Price Alert</Divider>
-            )}
+            {!(searchParam != null && searchParam !== undefined) &&
+              Object.keys(data.price).length > 0 && (
+                <Divider>Set Price Alert</Divider>
+              )}
             {addedTracker && (
               <Alert
                 message="Confirmation of tracker has been sent over mail.
@@ -181,45 +183,46 @@ const PDP = ({ data }) => {
                 closable
               />
             )}
-            {Object.keys(data.price).length > 0 && (
-              <>
-                <Row style={{ marginLeft: "10px" }}>
-                  <Col span={12}>
-                    <Slider
-                      min={1}
-                      max={data.price.discountPrice - 1}
-                      onChange={onChange}
-                      value={typeof inputValue === "number" ? inputValue : 1}
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <InputNumber
-                      addonBefore="₹"
-                      min={1}
-                      max={data.price.discountPrice - 1}
-                      style={{
-                        width: "120px",
-                        margin: "0 16px",
-                      }}
-                      value={inputValue}
-                      onChange={onChange}
-                    />
-                  </Col>
-                </Row>
-                <Button
-                  block
-                  type="primary"
-                  style={{ backgroundColor: "#EB2F96" }}
-                  onClick={handlePriceAlert}
-                  loading={loading}
-                >
-                  SET PRICE ALERT
-                </Button>
-                <Text type="secondary">
-                  We will notify you on email as soon as the price drops
-                </Text>
-              </>
-            )}
+            {!(searchParam != null && searchParam !== undefined) &&
+              Object.keys(data.price).length > 0 && (
+                <>
+                  <Row style={{ marginLeft: "10px" }}>
+                    <Col span={12}>
+                      <Slider
+                        min={1}
+                        max={data.price.discountPrice - 1}
+                        onChange={onChange}
+                        value={typeof inputValue === "number" ? inputValue : 1}
+                      />
+                    </Col>
+                    <Col span={4}>
+                      <InputNumber
+                        addonBefore="₹"
+                        min={1}
+                        max={data.price.discountPrice - 1}
+                        style={{
+                          width: "120px",
+                          margin: "0 16px",
+                        }}
+                        value={inputValue}
+                        onChange={onChange}
+                      />
+                    </Col>
+                  </Row>
+                  <Button
+                    block
+                    type="primary"
+                    style={{ backgroundColor: "#EB2F96" }}
+                    onClick={handlePriceAlert}
+                    loading={loading}
+                  >
+                    SET PRICE ALERT
+                  </Button>
+                  <Text type="secondary">
+                    We will notify you on email as soon as the price drops
+                  </Text>
+                </>
+              )}
           </Space>
         </div>
       </div>
