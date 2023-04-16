@@ -116,7 +116,7 @@ const Home = () => {
       <div style={{ display: "flex" }}>
         <Search
           className="search-component"
-          placeholder="Paste your url"
+          placeholder="Paste product link from Amazon and Flipkart only"
           allowClear
           loading={loading}
           size="large"
