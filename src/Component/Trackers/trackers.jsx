@@ -457,7 +457,10 @@ const Trackers = () => {
                             )}
                             {priceHistoryData != null &&
                               priceHistoryData !== undefined &&
-                              priceHistoryData.length > 0 && (
+                              priceHistoryData.length > 0 &&
+                              priceHistoryData.find((x) =>
+                                val.url.includes(x.url)
+                              ) !== undefined && (
                                 <div style={{ marginTop: "10px" }}>
                                   <Space size={[0, "small"]}>
                                     <Tag bordered={false} color="green">

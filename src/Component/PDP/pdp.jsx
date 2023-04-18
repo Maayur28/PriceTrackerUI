@@ -24,7 +24,6 @@ import Paragraph from "antd/es/typography/Paragraph";
 const { Title, Text } = Typography;
 
 const PDP = ({ searchParam, data }) => {
-  console.log(searchParam);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState(1);
