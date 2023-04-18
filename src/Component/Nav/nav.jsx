@@ -3,6 +3,7 @@ import { Layout, Menu, Image } from "antd";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./nav.css";
+import { clearLogout } from "../../Cache";
 const { Header } = Layout;
 
 const Nav = () => {
@@ -14,8 +15,7 @@ const Nav = () => {
       Cookies.get("accessToken").endsWith("=") &&
       Cookies.get("refreshToken")
     ) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
       navigate("/");
     } else {
       navigate("/login");

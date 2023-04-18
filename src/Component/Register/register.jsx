@@ -4,6 +4,7 @@ import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
 import "./register.css";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { clearLogout, setLoginCookies } from "../../Cache";
 const { Option } = Select;
 const { Step } = Steps;
 
@@ -21,8 +22,7 @@ const Register = () => {
     )
       navigate("/");
     else {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
     }
   }, [navigate]);
 
@@ -79,21 +79,11 @@ const Register = () => {
         if (data.sessionId === false) setError("Invalid Otp!!!");
         else {
           Cookies.remove("sessionId");
-          Cookies.set("accessToken", data.accessToken, {
-            expires: 7,
-            path: "",
-          });
-          Cookies.set("refreshToken", data.jwtRefreshToken, {
-            expires: 7,
-            path: "",
-          });
-          Cookies.set("profileName", data.name, {
-            expires: 7,
-            path: "",
-          });
-          Cookies.set("profileImage", data.image, {
-            expires: 7,
-            path: "",
+          setLoginCookies({
+            accessToken: data.accessToken,
+            refreshToken: data.jwtRefreshToken,
+            profileName: data.name,
+            profileImage: data.image,
           });
           message.success("Registered Successfully", 3);
           navigate("/trackers");

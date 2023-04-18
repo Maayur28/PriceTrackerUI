@@ -23,22 +23,33 @@ import {
   ArrowDownOutlined,
 } from "@ant-design/icons";
 import fmt from "indian-number-format";
+import { addTracker, clearLogout, getTracker } from "../../Cache";
 import "./trackers.css";
 
 const { Meta } = Card;
 const { Title, Text } = Typography;
 
 const Trackers = () => {
+  const trackerKey = "priceTracker_trackers";
+  const trackerPriceHistoryKey = "priceTracker_trackersPriceHistory";
   const containerWidth = window.innerWidth;
   const [messageApi, contextHolder] = message.useMessage();
-  const [priceHistoryCalled, setPriceHistoryCalled] = useState(false);
+  const [priceHistoryCalled, setPriceHistoryCalled] = useState(
+    getTracker(trackerPriceHistoryKey) == null ? false : true
+  );
 
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [edit, setEdit] = useState("");
-  const [data, setData] = useState([]);
-  const [priceHistoryData, setPriceHistoryData] = useState([]);
+  const [data, setData] = useState(
+    getTracker(trackerKey) == null ? [] : getTracker(trackerKey)
+  );
+  const [priceHistoryData, setPriceHistoryData] = useState(
+    getTracker(trackerPriceHistoryKey) == null
+      ? []
+      : getTracker(trackerPriceHistoryKey)
+  );
   const [deleteLoading, setDeleteLoading] = useState("");
   const [alertPrice, setalertPrice] = useState(0);
 
@@ -47,8 +58,7 @@ const Trackers = () => {
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
     ) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
       messageApi.open({
         type: "error",
         content: "Login to view trackers",
@@ -77,6 +87,7 @@ const Trackers = () => {
         ) {
           if (response.data) {
             setData(response.data.data);
+            addTracker(trackerKey, response.data.data);
           }
         }
         setloading(false);
@@ -106,8 +117,7 @@ const Trackers = () => {
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
     ) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
       messageApi.open({
         type: "error",
         content: "Login to view trackers",
@@ -134,6 +144,7 @@ const Trackers = () => {
         ) {
           if (response.data) {
             setPriceHistoryData(response.data.data);
+            addTracker(trackerPriceHistoryKey, response.data.data);
           }
         }
       } catch (error) {
@@ -146,7 +157,7 @@ const Trackers = () => {
   };
 
   useEffect(() => {
-    fetchTracker();
+    if (data == null || data === undefined || data.length === 0) fetchTracker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -169,8 +180,7 @@ const Trackers = () => {
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
     ) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
       messageApi.open({
         type: "error",
         content: "Please login!!!",
@@ -202,6 +212,7 @@ const Trackers = () => {
           ) {
             if (response.data) {
               setData(response.data.data);
+              addTracker(trackerKey, response.data.data);
               messageApi.open({
                 type: "success",
                 content: "Updated",
@@ -232,8 +243,7 @@ const Trackers = () => {
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
     ) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
       messageApi.open({
         type: "error",
         content: "Please login!!!",
@@ -263,6 +273,7 @@ const Trackers = () => {
         ) {
           if (response.data) {
             setData(response.data.data);
+            addTracker(trackerKey, response.data.data);
             setDeleteLoading("");
             messageApi.open({
               type: "success",

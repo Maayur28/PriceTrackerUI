@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
+import { clearLogout, setLoginCookies } from "../../Cache";
 import Cookies from "js-cookie";
 
 import "./login.css";
@@ -18,8 +19,7 @@ const Login = () => {
     )
       navigate("/");
     else {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
     }
   }, [navigate]);
 
@@ -42,21 +42,11 @@ const Login = () => {
       })
       .then((data) => {
         setIsSubmitting(false);
-        Cookies.set("accessToken", data.accessToken, {
-          expires: 7,
-          path: "",
-        });
-        Cookies.set("refreshToken", data.jwtRefreshToken, {
-          expires: 7,
-          path: "",
-        });
-        Cookies.set("profileName", data.name, {
-          expires: 7,
-          path: "",
-        });
-        Cookies.set("profileImage", data.image, {
-          expires: 7,
-          path: "",
+        setLoginCookies({
+          accessToken: data.accessToken,
+          refreshToken: data.jwtRefreshToken,
+          profileName: data.name,
+          profileImage: data.image,
         });
         message.success("Login Successful", 5);
         navigate("/trackers");

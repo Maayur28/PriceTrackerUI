@@ -4,6 +4,7 @@ import { LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./password.css";
+import { clearLogout } from "../../../Cache";
 
 const Password = () => {
   let navigate = useNavigate();
@@ -58,8 +59,7 @@ const Password = () => {
               setIsSubmitting(false);
               if (val.status) {
                 message.success("Password Updated!!!", 3);
-                Cookies.remove("accessToken");
-                Cookies.remove("refreshToken");
+                clearLogout();
                 navigate("/login");
               } else {
                 message.error("Invalid Password!!!", 3);

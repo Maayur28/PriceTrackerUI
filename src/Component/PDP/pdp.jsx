@@ -20,6 +20,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import fmt from "indian-number-format";
 import Paragraph from "antd/es/typography/Paragraph";
+import { clearLogout } from "../../Cache";
 
 const { Title, Text } = Typography;
 
@@ -39,8 +40,7 @@ const PDP = ({ searchParam, data }) => {
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
     ) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
       messageApi.open({
         type: "error",
         content: "Please login!!!",
@@ -69,6 +69,7 @@ const PDP = ({ searchParam, data }) => {
           ) {
             if (response.data) {
               setaddedTracker(true);
+              localStorage.removeItem('gettracker');
             }
           }
           setloading(false);

@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import "./profile.css";
+import { clearLogout } from "../../../Cache";
 
 const { Option } = Select;
 const Profile = () => {
@@ -89,8 +90,7 @@ const Profile = () => {
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
     ) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
       navigate("/login");
     } else {
       setIsSubmitting(true);
@@ -159,16 +159,14 @@ const Profile = () => {
           } else {
             message.error("Please login to view account", 5);
             setIsSubmitting(false);
-            Cookies.remove("accessToken");
-            Cookies.remove("refreshToken");
+            clearLogout();
             navigate("/login");
           }
         })
         .catch((err) => {
           setIsSubmitting(false);
           message.error("Please login to view account", 5);
-          Cookies.remove("accessToken");
-          Cookies.remove("refreshToken");
+          clearLogout();
           navigate("/login");
         });
     }
@@ -289,8 +287,7 @@ const Profile = () => {
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
     ) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
+      clearLogout();
       navigate("/login");
     } else {
       setVerifyCalled(true);
@@ -346,16 +343,14 @@ const Profile = () => {
           } else {
             message.error("Please login to view account", 5);
             setValidating(false);
-            Cookies.remove("accessToken");
-            Cookies.remove("refreshToken");
+            clearLogout();
             navigate("/login");
           }
         })
         .catch((err) => {
           setValidating(false);
           message.error("Please login to view account", 5);
-          Cookies.remove("accessToken");
-          Cookies.remove("refreshToken");
+          clearLogout();
           navigate("/login");
         });
     }
