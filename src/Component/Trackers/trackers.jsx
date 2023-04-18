@@ -20,6 +20,7 @@ import {
   CheckOutlined,
   EditOutlined,
   LineChartOutlined,
+  ArrowDownOutlined,
 } from "@ant-design/icons";
 import fmt from "indian-number-format";
 import "./trackers.css";
@@ -346,7 +347,15 @@ const Trackers = () => {
                             : containerWidth > 900 && containerWidth <= 1200
                             ? "400px"
                             : "30vw",
-                        height: 490,
+                        height:
+                          priceHistoryData != null &&
+                          priceHistoryData !== undefined &&
+                          priceHistoryData.length > 0 &&
+                          priceHistoryData.find((x) =>
+                            val.url.includes(x.url)
+                          ) !== undefined
+                            ? 490
+                            : 455,
                         margin: "15px",
                       }}
                       actions={[
@@ -463,8 +472,8 @@ const Trackers = () => {
                               ) !== undefined && (
                                 <div style={{ marginTop: "10px" }}>
                                   <Space size={[0, "small"]}>
-                                    <Tag bordered={false} color="green">
-                                      MinPrice:
+                                    <Tag bordered={false} color="#87D068">
+                                      MinPrice:&nbsp;
                                       {
                                         priceHistoryData.find((x) =>
                                           val.url.includes(x.url)
@@ -472,16 +481,33 @@ const Trackers = () => {
                                       }
                                     </Tag>
 
-                                    <Tag bordered={false} color="blue">
-                                      CurPrice:
+                                    <Tag
+                                      icon={
+                                        priceHistoryData.find((x) =>
+                                          val.url.includes(x.url)
+                                        ).currentPrice <
+                                          val.price.discountPrice && (
+                                          <ArrowDownOutlined className="price_dropped" />
+                                        )
+                                      }
+                                      bordered={false}
+                                      color={
+                                        priceHistoryData.find((x) =>
+                                          val.url.includes(x.url)
+                                        ).currentPrice < val.price.discountPrice
+                                          ? "#108EE9"
+                                          : "blue"
+                                      }
+                                    >
+                                      CurPrice:&nbsp;
                                       {
                                         priceHistoryData.find((x) =>
                                           val.url.includes(x.url)
                                         ).currentPrice
                                       }
                                     </Tag>
-                                    <Tag bordered={false} color="red">
-                                      MaxPrice:
+                                    <Tag bordered={false} color="#CD201F">
+                                      MaxPrice:&nbsp;
                                       {
                                         priceHistoryData.find((x) =>
                                           val.url.includes(x.url)
