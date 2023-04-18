@@ -33,6 +33,12 @@ export const clearLogout = () => {
   });
 };
 
+export const removeTrackerStorage = () => {
+  handleLogoutStorage.forEach((element) => {
+    localStorage.removeItem(element);
+  });
+};
+
 export const addTracker = (key, value) => {
   let expiryTimeInMinutes = 60;
   const now = new Date();

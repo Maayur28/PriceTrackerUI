@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import "./profile.css";
 import { clearLogout } from "../../../Cache";
+import { validateLogin } from "../../../Util";
 
 const { Option } = Select;
 const Profile = () => {
@@ -86,92 +87,88 @@ const Profile = () => {
   );
 
   useEffect(() => {
-    if (
-      Cookies.get("accessToken") === undefined ||
-      Cookies.get("refreshToken") === undefined
-    ) {
-      clearLogout();
-      navigate("/login");
-    } else {
-      setIsSubmitting(true);
-      fetch("https://price-tracker-auth.vercel.app/verifyaccess", {
-        method: "POST",
-        body: JSON.stringify({
-          accessToken: Cookies.get("accessToken"),
-          refreshToken: Cookies.get("refreshToken"),
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      })
-        .then(async (response) => {
-          if (response.status >= 200 && response.status <= 299) {
-            return response.json();
-          } else {
-            const text = await response.text();
-            throw new Error(text);
-          }
-        })
-        .then((data) => {
-          if (data.accessToken !== false) {
-            Cookies.set("accessToken", data.accessToken, {
-              expires: 7,
-              path: "",
-            });
-            fetch(
-              `https://price-tracker-auth.vercel.app/getprofile/${data.userid}`
-            )
-              .then(async (response) => {
-                if (response.status >= 200 && response.status <= 299) {
-                  return response.json();
-                } else {
-                  const text = await response.text();
-                  throw new Error(text);
-                }
-              })
-              .then((val) => {
-                setIsSubmitting(false);
-                setProfile(val.profile);
-                if (
-                  val.profile.image != null &&
-                  val.profile.image !== undefined &&
-                  val.profile.image !== ""
-                ) {
-                  let file = {};
-                  file.status = "done";
-                  file.url = val.profile.image;
-                  file.added = true;
-                  setFileList([file]);
-                } else {
-                  setFileList([]);
-                }
-                setUserNameVerified(true);
-                setusernameChange(false);
-                form.setFieldsValue(val.profile);
-              })
-              .catch((err) => {
-                setIsSubmitting(false);
-                message.error(
-                  "Sorry!!! Server is busy. Please try again later",
-                  5
-                );
-              });
-          } else {
-            message.error("Please login to view account", 5);
-            setIsSubmitting(false);
-            clearLogout();
-            navigate("/login");
-          }
-        })
-        .catch((err) => {
-          setIsSubmitting(false);
-          message.error("Please login to view account", 5);
-          clearLogout();
-          navigate("/login");
-        });
-    }
+    validateLogin() ? navigate("/login") : fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchProfile = () => {
+    setIsSubmitting(true);
+    fetch("https://price-tracker-auth.vercel.app/verifyaccess", {
+      method: "POST",
+      body: JSON.stringify({
+        accessToken: Cookies.get("accessToken"),
+        refreshToken: Cookies.get("refreshToken"),
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then(async (response) => {
+        if (response.status >= 200 && response.status <= 299) {
+          return response.json();
+        } else {
+          const text = await response.text();
+          throw new Error(text);
+        }
+      })
+      .then((data) => {
+        if (data.accessToken !== false) {
+          Cookies.set("accessToken", data.accessToken, {
+            expires: 7,
+            path: "",
+          });
+          fetch(
+            `https://price-tracker-auth.vercel.app/getprofile/${data.userid}`
+          )
+            .then(async (response) => {
+              if (response.status >= 200 && response.status <= 299) {
+                return response.json();
+              } else {
+                const text = await response.text();
+                throw new Error(text);
+              }
+            })
+            .then((val) => {
+              setIsSubmitting(false);
+              setProfile(val.profile);
+              if (
+                val.profile.image != null &&
+                val.profile.image !== undefined &&
+                val.profile.image !== ""
+              ) {
+                let file = {};
+                file.status = "done";
+                file.url = val.profile.image;
+                file.added = true;
+                setFileList([file]);
+              } else {
+                setFileList([]);
+              }
+              setUserNameVerified(true);
+              setusernameChange(false);
+              form.setFieldsValue(val.profile);
+            })
+            .catch((err) => {
+              setIsSubmitting(false);
+              message.error(
+                "Sorry!!! Server is busy. Please try again later",
+                5
+              );
+            });
+        } else {
+          message.error("Please login to view account", 5);
+          setIsSubmitting(false);
+          clearLogout();
+          navigate("/login");
+        }
+      })
+      .catch((err) => {
+        setIsSubmitting(false);
+        message.error("Please login to view account", 5);
+        clearLogout();
+        navigate("/login");
+      });
+  };
 
   const onFinish = (values) => {
     if (usernameVerified) {

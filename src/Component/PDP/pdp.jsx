@@ -20,7 +20,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import fmt from "indian-number-format";
 import Paragraph from "antd/es/typography/Paragraph";
-import { clearLogout } from "../../Cache";
+import { clearLogout, removeTrackerStorage } from "../../Cache";
 
 const { Title, Text } = Typography;
 
@@ -69,7 +69,7 @@ const PDP = ({ searchParam, data }) => {
           ) {
             if (response.data) {
               setaddedTracker(true);
-              localStorage.removeItem('gettracker');
+              removeTrackerStorage();
             }
           }
           setloading(false);

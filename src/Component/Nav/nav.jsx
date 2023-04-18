@@ -3,24 +3,11 @@ import { Layout, Menu, Image } from "antd";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./nav.css";
-import { clearLogout } from "../../Cache";
+import { handleLoginLogout } from "../../Util";
 const { Header } = Layout;
 
 const Nav = () => {
   const navigate = useNavigate();
-
-  const handleLoginLogout = () => {
-    if (
-      Cookies.get("accessToken") &&
-      Cookies.get("accessToken").endsWith("=") &&
-      Cookies.get("refreshToken")
-    ) {
-      clearLogout();
-      navigate("/");
-    } else {
-      navigate("/login");
-    }
-  };
 
   return (
     <Layout style={{ height: "60px" }}>
@@ -65,7 +52,12 @@ const Nav = () => {
             <Menu.Item key="contact" onClick={() => navigate("/contact")}>
               Contact Us
             </Menu.Item>
-            <Menu.Item key="login/logout" onClick={handleLoginLogout}>
+            <Menu.Item
+              key="login/logout"
+              onClick={() =>
+                handleLoginLogout() ? navigate("/") : navigate("/login")
+              }
+            >
               {Cookies.get("accessToken") &&
               Cookies.get("accessToken").endsWith("=") &&
               Cookies.get("refreshToken")
