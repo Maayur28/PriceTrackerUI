@@ -87,7 +87,7 @@ const Profile = () => {
   );
 
   useEffect(() => {
-    validateLogin() ? navigate("/login") : fetchProfile();
+    validateLogin() ? fetchProfile() : navigate("/login");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
