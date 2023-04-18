@@ -70,7 +70,12 @@ const Home = () => {
       setData({});
       val = val.trim();
       try {
-        let response = await client.get(`/scrap?url=${val}`);
+        const config = {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+        };
+        let response = await client.get(`/scrap?url=${val}`, config);
         if (
           response.status === 200 &&
           response.data != null &&
@@ -134,7 +139,7 @@ const Home = () => {
           Paste
         </Button>
       </div>
-      {!loading && Object.keys(priceHistory).length === 0 ? (
+      {!loading && Object.keys(data).length === 0 ? (
         <div>
           <Image
             width="100vw"
@@ -159,7 +164,7 @@ const Home = () => {
           <div>
             {!loading && Object.keys(data).length > 0 && (
               <PDP
-                searchParam={searchParams && searchParams.get("url")}
+                searchParam={searchParams ? searchParams.get("url") : null}
                 data={data}
               />
             )}
