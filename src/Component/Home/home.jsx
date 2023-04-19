@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Input, Image, message, Button } from "antd";
+import { Image, message } from "antd";
 import { useSearchParams } from "react-router-dom";
-import axios from "axios";
-import "./home.css";
 import TimelineStatus from "../TimelineStatus/timelineStatus";
 import PDP from "../PDP/pdp";
 import PriceHistory from "../PriceHistory/priceHistory";
-import { SnippetsOutlined } from "@ant-design/icons";
-const { Search } = Input;
+import { fetchData } from "../../Apis";
+import { validateURL } from "./homeUtil";
+import "./home.css";
+import SearchComponent from "./SearchComponent";
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -16,11 +16,7 @@ const Home = () => {
   const [currentIntervalTime, setCurrentIntervalTime] = useState(1000);
   const [messageApi, contextHolder] = message.useMessage();
   const [data, setData] = useState({});
-  const [searchValue, setSearchValue] = useState("");
   const [priceHistory, setpriceHistory] = useState({});
-  const client = axios.create({
-    baseURL: "https://price-tracker-orchestration.vercel.app",
-  });
 
   useEffect(() => {
     if (loading) {
@@ -33,36 +29,6 @@ const Home = () => {
     }
   }, [currentIntervalTime, currentTimeline, loading]);
 
-  useEffect(() => {
-    if (
-      searchParams != null &&
-      searchParams !== undefined &&
-      searchParams.get("url") !== undefined &&
-      searchParams.get("url") !== ""
-    ) {
-      setSearchValue(searchParams.get("url"));
-      onSearch(searchParams.get("url"));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
-  const validateURL = (val) => {
-    var res = val.match(
-      /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)/g
-    );
-    if (res == null) return false;
-    else return true;
-  };
-
-  const handlePaste = async (event) => {
-    try {
-      const text = await navigator.clipboard.readText();
-      setSearchValue(text);
-    } catch (error) {
-      console.log("Failed to read clipboard. Using execCommand instead.");
-    }
-  };
-
   const onSearch = async (val) => {
     setCurrentTimeline(0);
     if (val != null && val !== undefined && val !== "" && validateURL(val)) {
@@ -70,31 +36,21 @@ const Home = () => {
       setData({});
       val = val.trim();
       try {
-        const config = {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
-        };
-        let response = await client.get(`/scrap?url=${val}`, config);
-        if (
-          response.status === 200 &&
-          response.data != null &&
-          response.data !== undefined &&
-          response.data !== "" &&
-          response.data.response != null &&
-          response.data.response !== undefined &&
-          response.data.response !== "" &&
-          response.data.response.data != null &&
-          response.data.response.data !== undefined &&
-          response.data.response.data !== ""
-        ) {
-          setData(response.data.response.data);
+        let response = await fetchData(val);
+        if (response != null) {
           if (
-            response.data.response.priceHistory != null &&
-            response.data.response.priceHistory !== undefined &&
-            response.data.response.priceHistory !== ""
+            response.data != null &&
+            response.data !== undefined &&
+            response.data !== ""
           ) {
-            setpriceHistory(response.data.response.priceHistory);
+            setData(response.data);
+          }
+          if (
+            response.priceHistory != null &&
+            response.priceHistory !== undefined &&
+            response.priceHistory !== ""
+          ) {
+            setpriceHistory(response.priceHistory);
           }
         }
         setCurrentTimeline(0);
@@ -104,7 +60,7 @@ const Home = () => {
         setCurrentTimeline(0);
         messageApi.open({
           type: "error",
-          content: error.response.data,
+          content: "Please try again",
         });
       }
     }
@@ -119,25 +75,11 @@ const Home = () => {
         src="/pricetracker-high-resolution-logo-color-on-transparent-background (1).png"
       />
       <div style={{ display: "flex" }}>
-        <Search
-          className="search-component"
-          placeholder="Paste product link from Amazon and Flipkart only"
-          allowClear
+        <SearchComponent
           loading={loading}
-          size="large"
-          enterButton="Search"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          searchParams={searchParams}
           onSearch={onSearch}
         />
-        <Button
-          icon={<SnippetsOutlined />}
-          type="button"
-          className="btn paste-wrap"
-          onClick={handlePaste}
-        >
-          Paste
-        </Button>
       </div>
       {!loading && Object.keys(data).length === 0 ? (
         <div>
