@@ -379,32 +379,7 @@ const Trackers = () => {
         });
         setcloneData(newData);
       }
-      if (value === "Price Drop : Low to High") {
-        let newPriceHistoryData = [];
-        data.forEach((element) => {
-          priceHistoryData.every((x) => {
-            if (x.url.includes(element.url)) {
-              let obj = {};
-              obj.currentPrice = element.price.discountPrice - x.currentPrice;
-              obj.url = x.url;
-              newPriceHistoryData.push(obj);
-              return false;
-            } else return true;
-          });
-        });
-        newPriceHistoryData.sort((a, b) => a.currentPrice - b.currentPrice);
-        let newData = [];
-        newPriceHistoryData.forEach((element) => {
-          data.every((x) => {
-            if (x.url.includes(element.url)) {
-              newData.push(x);
-              return false;
-            } else return true;
-          });
-        });
-        setcloneData(newData);
-      }
-      if (value === "Price Drop : High to Low") {
+      if (value === "Maximum Price Drop") {
         let newPriceHistoryData = [];
         data.forEach((element) => {
           priceHistoryData.every((x) => {
@@ -447,7 +422,7 @@ const Trackers = () => {
               <Select
                 defaultValue="Relevance"
                 style={{
-                  width: 240,
+                  width: 225,
                 }}
                 onChange={handleChange}
                 options={[
@@ -464,12 +439,8 @@ const Trackers = () => {
                     label: "CurPrice : High to Low",
                   },
                   {
-                    value: "Price Drop : Low to High",
-                    label: "Price Drop : Low to High",
-                  },
-                  {
-                    value: "Price Drop : High to Low",
-                    label: "Price Drop : High to Low",
+                    value: "Maximum Price Drop",
+                    label: "Maximum Price Drop",
                   },
                 ]}
               />
@@ -503,7 +474,11 @@ const Trackers = () => {
                             priceHistoryData.find((x) =>
                               val.url.includes(x.url)
                             ) !== undefined
-                              ? 490
+                              ? priceHistoryData.find((x) =>
+                                  val.url.includes(x.url)
+                                ).currentPrice < val.price.discountPrice
+                                ? 510
+                                : 490
                               : 455,
                           margin: "15px",
                         }}
@@ -613,59 +588,74 @@ const Trackers = () => {
                                   )}
                                 </div>
                               )}
+
                               {priceHistoryData != null &&
                                 priceHistoryData !== undefined &&
                                 priceHistoryData.length > 0 &&
                                 priceHistoryData.find((x) =>
                                   val.url.includes(x.url)
                                 ) !== undefined && (
-                                  <div style={{ marginTop: "10px" }}>
-                                    <Space size={[0, "small"]}>
-                                      <Tag bordered={false} color="#87D068">
-                                        MinPrice:&nbsp;
-                                        {
-                                          priceHistoryData.find((x) =>
-                                            val.url.includes(x.url)
-                                          ).minimumPrice
-                                        }
-                                      </Tag>
-
-                                      <Tag
-                                        icon={
-                                          priceHistoryData.find((x) =>
-                                            val.url.includes(x.url)
-                                          ).currentPrice <
-                                            val.price.discountPrice && (
-                                            <ArrowDownOutlined className="price_dropped" />
-                                          )
-                                        }
-                                        bordered={false}
-                                        color={
-                                          priceHistoryData.find((x) =>
-                                            val.url.includes(x.url)
-                                          ).currentPrice <
-                                          val.price.discountPrice
-                                            ? "#108EE9"
-                                            : "blue"
-                                        }
+                                  <>
+                                    {priceHistoryData.find((x) =>
+                                      val.url.includes(x.url)
+                                    ).currentPrice <
+                                      val.price.discountPrice && (
+                                      <Title
+                                        level={5}
+                                        style={{
+                                          margin: "0",
+                                          color: "#7F4574",
+                                          fontWeight: "bolder",
+                                        }}
                                       >
-                                        CurPrice:&nbsp;
-                                        {
+                                        <ArrowDownOutlined className="price_dropped" />
+                                        Price dropped by&nbsp;
+                                        {val.price.discountPrice -
                                           priceHistoryData.find((x) =>
                                             val.url.includes(x.url)
-                                          ).currentPrice
-                                        }
-                                      </Tag>
-                                      <Tag bordered={false} color="#CD201F">
-                                        MaxPrice:&nbsp;
-                                        {
-                                          priceHistoryData.find((x) =>
-                                            val.url.includes(x.url)
-                                          ).maximumPrice
-                                        }
-                                      </Tag>
-                                    </Space>
-                                  </div>
+                                          ).currentPrice}
+                                      </Title>
+                                    )}
+                                    <div style={{ marginTop: "10px" }}>
+                                      <Space size={[0, "small"]}>
+                                        <Tag bordered={false} color="#87D068">
+                                          MinPrice:&nbsp;
+                                          {
+                                            priceHistoryData.find((x) =>
+                                              val.url.includes(x.url)
+                                            ).minimumPrice
+                                          }
+                                        </Tag>
+
+                                        <Tag
+                                          bordered={false}
+                                          color={
+                                            priceHistoryData.find((x) =>
+                                              val.url.includes(x.url)
+                                            ).currentPrice <
+                                            val.price.discountPrice
+                                              ? "#108EE9"
+                                              : "blue"
+                                          }
+                                        >
+                                          CurPrice:&nbsp;
+                                          {
+                                            priceHistoryData.find((x) =>
+                                              val.url.includes(x.url)
+                                            ).currentPrice
+                                          }
+                                        </Tag>
+                                        <Tag bordered={false} color="#CD201F">
+                                          MaxPrice:&nbsp;
+                                          {
+                                            priceHistoryData.find((x) =>
+                                              val.url.includes(x.url)
+                                            ).maximumPrice
+                                          }
+                                        </Tag>
+                                      </Space>
+                                    </div>
+                                  </>
                                 )}
                             </div>
                           }

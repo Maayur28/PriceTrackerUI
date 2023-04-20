@@ -39,7 +39,7 @@
 }
 .sort_by_container {
   position: absolute;
-  right: 4%;
+  right: 3%;
   margin-top: -20px;
 }
 .sort_by_container .ant-select-selector .ant-select-selection-item {
@@ -48,7 +48,7 @@
 .sort_by_label {
   width: 50px;
   position: absolute;
-  right: 77%;
+  right: 75%;
   top: 15%;
   z-index: 1;
 }
