@@ -39,13 +39,13 @@
 }
 .sort_by_container {
   position: absolute;
-  right: 3%;
+  right: 4%;
   margin-top: -20px;
 }
 .sort_by_container .ant-select-selector .ant-select-selection-item {
   text-align: right;
 }
-.sort_by_label{
+.sort_by_label {
   width: 50px;
   position: absolute;
   right: 77%;
