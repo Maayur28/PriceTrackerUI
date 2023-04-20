@@ -63,6 +63,40 @@ const Nav = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const dismissNotification = async () => {
+    if (
+      Cookies.get("accessToken") !== undefined &&
+      Cookies.get("refreshToken") !== undefined
+    ) {
+      fetch("https://price-tracker-auth.vercel.app/dismissNotification", {
+        method: "POST",
+        body: JSON.stringify({
+          accessToken: Cookies.get("accessToken"),
+          refreshToken: Cookies.get("refreshToken"),
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then(async (response) => {
+          if (response.status >= 200 && response.status <= 299) {
+            return response.json();
+          } else {
+            const text = await response.text();
+            throw new Error(text);
+          }
+        })
+        .then((data) => {
+          if (data.success === true) {
+            setItems([]);
+          }
+        })
+        .catch((err) => {
+          console.log("Not logged In!!");
+        });
+    }
+  };
+
   const openInNewTab = (url) => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
