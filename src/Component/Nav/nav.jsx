@@ -1,13 +1,54 @@
 import React from "react";
-import { Layout, Menu, Image } from "antd";
+import { Layout, Menu, Image, Dropdown } from "antd";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import "./nav.css";
+import { BellOutlined } from "@ant-design/icons";
 import { handleLoginLogout } from "../../Util";
+import "./nav.css";
+
 const { Header } = Layout;
 
 const Nav = () => {
   const navigate = useNavigate();
+
+  const items = [
+    {
+      key: "1",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.antgroup.com"
+        >
+          1st menu item
+        </a>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.aliyun.com"
+        >
+          2nd menu item
+        </a>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.luohanacademy.com"
+        >
+          3rd menu item
+        </a>
+      ),
+    },
+  ];
 
   return (
     <Layout style={{ height: "60px", position: "relative" }}>
@@ -26,6 +67,23 @@ const Nav = () => {
               preview={false}
             />
           </Menu.Item>
+          <Dropdown
+            menu={{
+              items,
+            }}
+            placement="bottomLeft"
+          >
+            <BellOutlined
+              style={{
+                fontSize: "20px",
+                cursor: "pointer",
+                position: "absolute",
+                right: "1%",
+                marginRight: "110px",
+                marginTop: "20px",
+              }}
+            />
+          </Dropdown>
           <Menu.SubMenu
             key="profile"
             title={`Hello,

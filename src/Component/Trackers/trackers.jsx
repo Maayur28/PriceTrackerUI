@@ -436,42 +436,46 @@ const Trackers = () => {
 
   return (
     <div>
-      <div className="sort_by_container">
-        <Text strong className="sort_by_label">
-          Sort By:
-        </Text>
-        <Select
-          defaultValue="Relevance"
-          style={{
-            width: 240,
-          }}
-          onChange={handleChange}
-          options={[
-            {
-              value: "Relevance",
-              label: "Relevance",
-            },
-            {
-              value: "CurPrice : Low to High",
-              label: "CurPrice : Low to High",
-            },
-            {
-              value: "CurPrice : High to Low",
-              label: "CurPrice : High to Low",
-            },
-            {
-              value: "Price Drop : Low to High",
-              label: "Price Drop : Low to High",
-            },
-            {
-              value: "Price Drop : High to Low",
-              label: "Price Drop : High to Low",
-            },
-          ]}
-        />
-      </div>
-      {contextHolder}
       <Spin tip="Loading..." spinning={loading}>
+        {cloneData != null &&
+          cloneData !== undefined &&
+          cloneData.length > 0 && (
+            <div className="sort_by_container">
+              <Text strong className="sort_by_label">
+                Sort By:
+              </Text>
+              <Select
+                defaultValue="Relevance"
+                style={{
+                  width: 240,
+                }}
+                onChange={handleChange}
+                options={[
+                  {
+                    value: "Relevance",
+                    label: "Relevance",
+                  },
+                  {
+                    value: "CurPrice : Low to High",
+                    label: "CurPrice : Low to High",
+                  },
+                  {
+                    value: "CurPrice : High to Low",
+                    label: "CurPrice : High to Low",
+                  },
+                  {
+                    value: "Price Drop : Low to High",
+                    label: "Price Drop : Low to High",
+                  },
+                  {
+                    value: "Price Drop : High to Low",
+                    label: "Price Drop : High to Low",
+                  },
+                ]}
+              />
+            </div>
+          )}
+        {contextHolder}
         <div className="trackers-container">
           {!loading && (
             <>
