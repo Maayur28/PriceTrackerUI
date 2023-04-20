@@ -205,6 +205,7 @@ const Nav = () => {
             menu={{
               items,
             }}
+            trigger={["click"]}
             placement="bottomLeft"
           >
             <BellOutlined
