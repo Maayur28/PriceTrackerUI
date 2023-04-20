@@ -54,13 +54,9 @@ const Trackers = () => {
   );
   const [limit, setLimit] = useState(
     getTracker(trackerKey) == null
-      ? containerWidth > 640
-        ? 10
-        : 5
+      ? 100
       : getTracker(trackerKey).limit == null
-      ? containerWidth > 640
-        ? 10
-        : 5
+      ? 100
       : getTracker(trackerKey).limit
   );
 
@@ -94,7 +90,7 @@ const Trackers = () => {
   const [deleteLoading, setDeleteLoading] = useState("");
   const [alertPrice, setalertPrice] = useState(0);
 
-  const fetchTracker = async (page = 0) => {
+  const fetchTracker = async (page = 0, limit = 100) => {
     if (
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
