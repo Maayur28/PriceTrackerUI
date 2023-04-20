@@ -15,6 +15,7 @@ import {
   Spin,
   Popover,
   Select,
+  Pagination,
 } from "antd";
 import {
   CloseOutlined,
@@ -34,7 +35,35 @@ const Trackers = () => {
   const trackerKey = "priceTracker_trackers";
   const trackerPriceHistoryKey = "priceTracker_trackersPriceHistory";
   const containerWidth = window.innerWidth;
+  const [sortByValue, setSortByValue] = useState("Relevance");
   const [messageApi, contextHolder] = message.useMessage();
+
+  const [currentPage, setCurrentPage] = useState(
+    getTracker(trackerKey) == null
+      ? 1
+      : getTracker(trackerKey).currentPage == null
+      ? 1
+      : getTracker(trackerKey).currentPage
+  );
+  const [totalPage, setTotalPage] = useState(
+    getTracker(trackerKey) == null
+      ? 0
+      : getTracker(trackerKey).total == null
+      ? 0
+      : getTracker(trackerKey).total
+  );
+  const [limit, setLimit] = useState(
+    getTracker(trackerKey) == null
+      ? containerWidth > 640
+        ? 10
+        : 5
+      : getTracker(trackerKey).limit == null
+      ? containerWidth > 640
+        ? 10
+        : 5
+      : getTracker(trackerKey).limit
+  );
+
   const [priceHistoryCalled, setPriceHistoryCalled] = useState(
     getTracker(trackerPriceHistoryKey) == null ? false : true
   );
@@ -44,10 +73,18 @@ const Trackers = () => {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [edit, setEdit] = useState("");
   const [data, setData] = useState(
-    getTracker(trackerKey) == null ? [] : getTracker(trackerKey)
+    getTracker(trackerKey) == null
+      ? []
+      : getTracker(trackerKey).products == null
+      ? []
+      : getTracker(trackerKey).products
   );
   const [cloneData, setcloneData] = useState(
-    getTracker(trackerKey) == null ? [] : getTracker(trackerKey)
+    getTracker(trackerKey) == null
+      ? []
+      : getTracker(trackerKey).products == null
+      ? []
+      : getTracker(trackerKey).products
   );
   const [priceHistoryData, setPriceHistoryData] = useState(
     getTracker(trackerPriceHistoryKey) == null
@@ -57,7 +94,7 @@ const Trackers = () => {
   const [deleteLoading, setDeleteLoading] = useState("");
   const [alertPrice, setalertPrice] = useState(0);
 
-  const fetchTracker = async () => {
+  const fetchTracker = async (page = 0) => {
     if (
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
@@ -71,8 +108,11 @@ const Trackers = () => {
     } else {
       setloading(true);
       try {
+        setPriceHistoryCalled(false);
         const response = await axios.post(
-          "https://price-tracker-auth.vercel.app/gettracker",
+          `https://price-tracker-auth.vercel.app/gettracker?page=${
+            page === 0 ? currentPage : page
+          }&limit=${limit}`,
           JSON.stringify({
             accessToken: Cookies.get("accessToken"),
             refreshToken: Cookies.get("refreshToken"),
@@ -87,11 +127,17 @@ const Trackers = () => {
           response.status === 200 &&
           response.data != null &&
           response.data !== undefined &&
-          response.data !== ""
+          response.data !== "" &&
+          response.data.data.products != null &&
+          response.data.data.products !== undefined &&
+          response.data.data.products.length > 0
         ) {
           if (response.data) {
-            setData(response.data.data);
-            setcloneData(response.data.data);
+            setData(response.data.data.products);
+            setSortByValue("Relevance");
+            setTotalPage(response.data.data.total);
+            setCurrentPage(response.data.data.currentPage);
+            setLimit(response.data.data.limit);
             addTracker(trackerKey, response.data.data);
           }
         }
@@ -104,6 +150,11 @@ const Trackers = () => {
         });
       }
     }
+  };
+
+  const onPageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    fetchTracker(pageNumber);
   };
 
   const getUrlsList = () => {
@@ -174,6 +225,7 @@ const Trackers = () => {
       data !== undefined &&
       data.length > 0
     ) {
+      setcloneData([]);
       setPriceHistoryCalled(true);
       fetchPriceHistory();
     }
@@ -201,7 +253,7 @@ const Trackers = () => {
           obj.accessToken = Cookies.get("accessToken");
           obj.refreshToken = Cookies.get("refreshToken");
           const response = await axios.put(
-            "https://price-tracker-auth.vercel.app/updatetracker",
+            `https://price-tracker-auth.vercel.app/updatetracker?page=${currentPage}&limit=${limit}`,
             obj,
             {
               headers: {
@@ -213,10 +265,17 @@ const Trackers = () => {
             response.status === 200 &&
             response.data != null &&
             response.data !== undefined &&
-            response.data !== ""
+            response.data !== "" &&
+            response.data.data.products != null &&
+            response.data.data.products !== undefined &&
+            response.data.data.products.length > 0
           ) {
             if (response.data) {
-              setData(response.data.data);
+              setData(response.data.data.products);
+              setSortByValue("Relevance");
+              setTotalPage(response.data.data.total);
+              setCurrentPage(response.data.data.currentPage);
+              setLimit(response.data.data.limit);
               addTracker(trackerKey, response.data.data);
               messageApi.open({
                 type: "success",
@@ -262,7 +321,7 @@ const Trackers = () => {
         obj.accessToken = Cookies.get("accessToken");
         obj.refreshToken = Cookies.get("refreshToken");
         const response = await axios.put(
-          "https://price-tracker-auth.vercel.app/deletetracker",
+          `https://price-tracker-auth.vercel.app/deletetracker?page=${currentPage}&limit=${limit}`,
           obj,
           {
             headers: {
@@ -274,10 +333,17 @@ const Trackers = () => {
           response.status === 200 &&
           response.data != null &&
           response.data !== undefined &&
-          response.data !== ""
+          response.data !== "" &&
+          response.data.data.products != null &&
+          response.data.data.products !== undefined &&
+          response.data.data.products.length > 0
         ) {
           if (response.data) {
-            setData(response.data.data);
+            setData(response.data.data.products);
+            setSortByValue("Relevance");
+            setTotalPage(response.data.data.total);
+            setCurrentPage(response.data.data.currentPage);
+            setLimit(response.data.data.limit);
             addTracker(trackerKey, response.data.data);
             setDeleteLoading("");
             messageApi.open({
@@ -296,53 +362,21 @@ const Trackers = () => {
     }
   };
 
-  const openInNewTab = (url) => {
-    window.open(url, "_blank", "noopener,noreferrer");
+  useEffect(() => {
+    if (data) {
+      sortData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortByValue, data, priceHistoryData]);
+
+  const handleChange = (val) => {
+    let value =
+      val == null || val === undefined || val === "" ? sortByValue : val;
+    setSortByValue(value);
   };
 
-  const content = (val) => (
-    <Space.Compact style={{ width: "220px" }}>
-      <Form.Item>
-        <InputNumber
-          name="alertPrice"
-          addonBefore="₹"
-          min={1}
-          max={val.price.discountPrice - 1}
-          value={val.alertPrice}
-          readOnly={val.productId !== edit}
-          onChange={(value) => setalertPrice(value)}
-        />
-      </Form.Item>
-      <Form.Item>
-        {edit === val.productId ? (
-          <Button
-            icon={<CheckOutlined />}
-            size="smmall"
-            style={{
-              color: "white",
-              backgroundColor: "#7F4574",
-            }}
-            type="primary"
-            onClick={handleAlertPrice}
-            disabled={alertPrice === 0 || alertPrice === val.alertPrice}
-            loading={buttonLoading}
-          >
-            Update
-          </Button>
-        ) : (
-          <Button
-            icon={<EditOutlined />}
-            size="smmall"
-            onClick={() => handleEdit(val.productId)}
-          >
-            Edit
-          </Button>
-        )}
-      </Form.Item>
-    </Space.Compact>
-  );
-
-  const handleChange = (value) => {
+  const sortData = () => {
+    let value = sortByValue;
     if (value === "Relevance") {
       setcloneData(data);
     } else if (
@@ -409,6 +443,51 @@ const Trackers = () => {
     }
   };
 
+  const openInNewTab = (url) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const content = (val) => (
+    <Space.Compact style={{ width: "220px" }}>
+      <Form.Item>
+        <InputNumber
+          name="alertPrice"
+          addonBefore="₹"
+          min={1}
+          max={val.price.discountPrice - 1}
+          value={val.alertPrice}
+          readOnly={val.productId !== edit}
+          onChange={(value) => setalertPrice(value)}
+        />
+      </Form.Item>
+      <Form.Item>
+        {edit === val.productId ? (
+          <Button
+            icon={<CheckOutlined />}
+            size="smmall"
+            style={{
+              color: "white",
+              backgroundColor: "#7F4574",
+            }}
+            type="primary"
+            onClick={handleAlertPrice}
+            disabled={alertPrice === 0 || alertPrice === val.alertPrice}
+            loading={buttonLoading}
+          >
+            Update
+          </Button>
+        ) : (
+          <Button
+            icon={<EditOutlined />}
+            size="smmall"
+            onClick={() => handleEdit(val.productId)}
+          >
+            Edit
+          </Button>
+        )}
+      </Form.Item>
+    </Space.Compact>
+  );
   return (
     <div>
       <Spin tip="Loading..." spinning={loading}>
@@ -420,7 +499,7 @@ const Trackers = () => {
                 Sort By:
               </Text>
               <Select
-                defaultValue="Relevance"
+                value={sortByValue}
                 style={{
                   width: 225,
                 }}
@@ -696,6 +775,14 @@ const Trackers = () => {
           )}
         </div>
       </Spin>
+      {cloneData != null && cloneData !== undefined && cloneData.length > 0 && (
+        <Pagination
+          defaultCurrent={currentPage}
+          total={totalPage}
+          onChange={onPageChange}
+          defaultPageSize={limit}
+        />
+      )}
     </div>
   );
 };

@@ -165,64 +165,77 @@ const PDP = ({ searchParam, data }) => {
             <Button block onClick={() => openInNewTab(data.url)}>
               BUY ON {data.domain}
             </Button>
-            {!(searchParam != null && searchParam !== undefined) &&
-              Object.keys(data.price).length > 0 && (
-                <Divider>Set Price Alert</Divider>
-              )}
-            {addedTracker && (
+            {addedTracker ? (
               <Alert
+                style={{ marginTop: "20px" }}
                 message="Confirmation of tracker has been sent over mail.
-           We will notify you once the price drops."
+           We will notify you over mail once the price drops below the alert price."
                 type="success"
                 showIcon
                 action={
-                  <Button size="small" onClick={() => navigate("/trackers")}>
-                    My Trackers
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    type="primary"
+                    size="small"
+                    onClick={() => navigate("/trackers")}
+                  >
+                    View My Trackers
                   </Button>
                 }
-                closable
+                closeText="Close Now"
+                onClose={() => setaddedTracker(false)}
               />
+            ) : (
+              <>
+                {!(searchParam != null && searchParam !== undefined) &&
+                  Object.keys(data.price).length > 0 && (
+                    <Divider>Set Price Alert</Divider>
+                  )}
+
+                {!(searchParam != null && searchParam !== undefined) &&
+                  Object.keys(data.price).length > 0 && (
+                    <>
+                      <Row style={{ marginLeft: "10px" }}>
+                        <Col span={12}>
+                          <Slider
+                            min={1}
+                            max={data.price.discountPrice - 1}
+                            onChange={onChange}
+                            value={
+                              typeof inputValue === "number" ? inputValue : 1
+                            }
+                          />
+                        </Col>
+                        <Col span={4}>
+                          <InputNumber
+                            addonBefore="₹"
+                            min={1}
+                            max={data.price.discountPrice - 1}
+                            style={{
+                              width: "120px",
+                              margin: "0 16px",
+                            }}
+                            value={inputValue}
+                            onChange={onChange}
+                          />
+                        </Col>
+                      </Row>
+                      <Button
+                        block
+                        type="primary"
+                        style={{ backgroundColor: "#EB2F96" }}
+                        onClick={handlePriceAlert}
+                        loading={loading}
+                      >
+                        SET PRICE ALERT
+                      </Button>
+                      <Text type="secondary">
+                        We will notify you on email as soon as the price drops
+                      </Text>
+                    </>
+                  )}
+              </>
             )}
-            {!(searchParam != null && searchParam !== undefined) &&
-              Object.keys(data.price).length > 0 && (
-                <>
-                  <Row style={{ marginLeft: "10px" }}>
-                    <Col span={12}>
-                      <Slider
-                        min={1}
-                        max={data.price.discountPrice - 1}
-                        onChange={onChange}
-                        value={typeof inputValue === "number" ? inputValue : 1}
-                      />
-                    </Col>
-                    <Col span={4}>
-                      <InputNumber
-                        addonBefore="₹"
-                        min={1}
-                        max={data.price.discountPrice - 1}
-                        style={{
-                          width: "120px",
-                          margin: "0 16px",
-                        }}
-                        value={inputValue}
-                        onChange={onChange}
-                      />
-                    </Col>
-                  </Row>
-                  <Button
-                    block
-                    type="primary"
-                    style={{ backgroundColor: "#EB2F96" }}
-                    onClick={handlePriceAlert}
-                    loading={loading}
-                  >
-                    SET PRICE ALERT
-                  </Button>
-                  <Text type="secondary">
-                    We will notify you on email as soon as the price drops
-                  </Text>
-                </>
-              )}
           </Space>
         </div>
       </div>
