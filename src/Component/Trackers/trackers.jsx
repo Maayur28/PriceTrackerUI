@@ -777,6 +777,7 @@ const Trackers = () => {
       </Spin>
       {cloneData != null && cloneData !== undefined && cloneData.length > 0 && (
         <Pagination
+          style={{ margin: "10px 0" }}
           defaultCurrent={currentPage}
           total={totalPage}
           onChange={onPageChange}

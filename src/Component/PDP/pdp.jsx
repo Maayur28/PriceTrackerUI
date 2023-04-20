@@ -167,14 +167,14 @@ const PDP = ({ searchParam, data }) => {
             </Button>
             {addedTracker ? (
               <Alert
-                style={{ marginTop: "20px" }}
+                style={{ marginTop: "10px" }}
                 message="Confirmation of tracker has been sent over mail.
-           We will notify you over mail once the price drops below the alert price."
+           We will notify over mail once the price drops."
                 type="success"
                 showIcon
                 action={
                   <Button
-                    style={{ marginLeft: "10px" }}
+                    style={{ marginLeft: "5px" }}
                     type="primary"
                     size="small"
                     onClick={() => navigate("/trackers")}
