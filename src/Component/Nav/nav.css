@@ -1,0 +1,9 @@
+.ant-list-item-meta-avatar {
+  display: inline;
+}
+.ant-list-item-meta-content {
+  display: inline;
+}
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  background-color: transparent;
+}
