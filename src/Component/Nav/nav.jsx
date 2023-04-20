@@ -88,7 +88,7 @@ const Nav = () => {
         })
         .then((data) => {
           if (data.success === true) {
-            setItems([]);
+            contructItems([]);
           }
         })
         .catch((err) => {
