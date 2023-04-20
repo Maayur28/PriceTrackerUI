@@ -114,6 +114,7 @@ const Nav = () => {
         <>
           <div style={{ cursor: "default" }}>
             <Button
+              onClick={dismissNotification}
               type="text"
               style={{ position: "absolute", right: "0", top: "0" }}
             >
