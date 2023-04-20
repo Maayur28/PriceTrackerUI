@@ -609,11 +609,13 @@ const Trackers = () => {
                                         }}
                                       >
                                         <ArrowDownOutlined className="price_dropped" />
-                                        Price dropped by&nbsp;
-                                        {val.price.discountPrice -
-                                          priceHistoryData.find((x) =>
-                                            val.url.includes(x.url)
-                                          ).currentPrice}
+                                        Price dropped by&nbsp; ₹
+                                        {fmt.format(
+                                          val.price.discountPrice -
+                                            priceHistoryData.find((x) =>
+                                              val.url.includes(x.url)
+                                            ).currentPrice
+                                        )}
                                       </Title>
                                     )}
                                     <div style={{ marginTop: "10px" }}>
