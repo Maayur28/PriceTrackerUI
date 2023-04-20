@@ -54,11 +54,20 @@ const Nav = () => {
             data.notification.length > 0
           ) {
             contructItems(data.notification);
+          } else {
+            contructItems([]);
           }
         })
         .catch((err) => {
           console.log("Not logged In!!");
         });
+    } else {
+      let item = [];
+      let obj = {};
+      obj.key = "no_notification";
+      obj.label = <Empty />;
+      item.push(obj);
+      setItems(item);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
