@@ -14,6 +14,7 @@ import {
   Image,
   Spin,
   Popover,
+  Select,
 } from "antd";
 import {
   CloseOutlined,
@@ -43,6 +44,9 @@ const Trackers = () => {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [edit, setEdit] = useState("");
   const [data, setData] = useState(
+    getTracker(trackerKey) == null ? [] : getTracker(trackerKey)
+  );
+  const [cloneData, setcloneData] = useState(
     getTracker(trackerKey) == null ? [] : getTracker(trackerKey)
   );
   const [priceHistoryData, setPriceHistoryData] = useState(
@@ -87,6 +91,7 @@ const Trackers = () => {
         ) {
           if (response.data) {
             setData(response.data.data);
+            setcloneData(response.data.data);
             addTracker(trackerKey, response.data.data);
           }
         }
@@ -337,202 +342,333 @@ const Trackers = () => {
     </Space.Compact>
   );
 
+  const handleChange = (value) => {
+    if (value === "Relevance") {
+      setcloneData(data);
+    } else if (
+      priceHistoryData != null &&
+      priceHistoryData !== undefined &&
+      priceHistoryData.length > 1 &&
+      data != null &&
+      data !== undefined &&
+      data.length > 1
+    ) {
+      if (value === "CurPrice : Low to High") {
+        priceHistoryData.sort((a, b) => a.currentPrice - b.currentPrice);
+        let newData = [];
+        priceHistoryData.forEach((element) => {
+          data.every((x) => {
+            if (x.url.includes(element.url)) {
+              newData.push(x);
+              return false;
+            } else return true;
+          });
+        });
+        setcloneData(newData);
+      }
+      if (value === "CurPrice : High to Low") {
+        priceHistoryData.sort((a, b) => b.currentPrice - a.currentPrice);
+        let newData = [];
+        priceHistoryData.forEach((element) => {
+          data.every((x) => {
+            if (x.url.includes(element.url)) {
+              newData.push(x);
+              return false;
+            } else return true;
+          });
+        });
+        setcloneData(newData);
+      }
+      if (value === "Price Drop : Low to High") {
+        let newPriceHistoryData = [];
+        data.forEach((element) => {
+          priceHistoryData.every((x) => {
+            if (x.url.includes(element.url)) {
+              let obj = {};
+              obj.currentPrice = element.price.discountPrice - x.currentPrice;
+              obj.url = x.url;
+              newPriceHistoryData.push(obj);
+              return false;
+            } else return true;
+          });
+        });
+        newPriceHistoryData.sort((a, b) => a.currentPrice - b.currentPrice);
+        let newData = [];
+        newPriceHistoryData.forEach((element) => {
+          data.every((x) => {
+            if (x.url.includes(element.url)) {
+              newData.push(x);
+              return false;
+            } else return true;
+          });
+        });
+        setcloneData(newData);
+      }
+      if (value === "Price Drop : High to Low") {
+        let newPriceHistoryData = [];
+        data.forEach((element) => {
+          priceHistoryData.every((x) => {
+            if (x.url.includes(element.url)) {
+              let obj = {};
+              obj.currentPrice = element.price.discountPrice - x.currentPrice;
+              obj.url = x.url;
+              newPriceHistoryData.push(obj);
+              return false;
+            } else return true;
+          });
+        });
+        newPriceHistoryData.sort((a, b) => b.currentPrice - a.currentPrice);
+        let newData = [];
+        newPriceHistoryData.forEach((element) => {
+          data.every((x) => {
+            if (x.url.includes(element.url)) {
+              newData.push(x);
+              return false;
+            } else return true;
+          });
+        });
+        setcloneData(newData);
+      }
+    } else {
+      setcloneData(data);
+    }
+  };
+
   return (
-    <>
+    <div>
+      <div className="sort_by_container">
+        <Text strong className="sort_by_label">
+          Sort By:
+        </Text>
+        <Select
+          defaultValue="Relevance"
+          style={{
+            width: 240,
+          }}
+          onChange={handleChange}
+          options={[
+            {
+              value: "Relevance",
+              label: "Relevance",
+            },
+            {
+              value: "CurPrice : Low to High",
+              label: "CurPrice : Low to High",
+            },
+            {
+              value: "CurPrice : High to Low",
+              label: "CurPrice : High to Low",
+            },
+            {
+              value: "Price Drop : Low to High",
+              label: "Price Drop : Low to High",
+            },
+            {
+              value: "Price Drop : High to Low",
+              label: "Price Drop : High to Low",
+            },
+          ]}
+        />
+      </div>
       {contextHolder}
       <Spin tip="Loading..." spinning={loading}>
         <div className="trackers-container">
           {!loading && (
             <>
-              {data != null && data !== undefined && data.length > 0 ? (
-                data.map((val, index) => (
-                  <Spin spinning={deleteLoading === val.productId}>
-                    <Card
-                      key={`tracker${index}`}
-                      style={{
-                        width:
-                          containerWidth <= 650
-                            ? "90vw"
-                            : containerWidth > 650 && containerWidth <= 900
-                            ? "44vw"
-                            : containerWidth > 900 && containerWidth <= 1200
-                            ? "400px"
-                            : "30vw",
-                        height:
-                          priceHistoryData != null &&
-                          priceHistoryData !== undefined &&
-                          priceHistoryData.length > 0 &&
-                          priceHistoryData.find((x) =>
-                            val.url.includes(x.url)
-                          ) !== undefined
-                            ? 490
-                            : 455,
-                        margin: "15px",
-                      }}
-                      actions={[
-                        <Button
-                          onClick={() => navigate(`/?url=${val.url}`)}
-                          type="text"
-                          icon={<LineChartOutlined />}
-                        >
-                          History
-                        </Button>,
-                        <>
-                          <Popover
-                            trigger="click"
-                            content={content(val)}
-                            title="Update Alert Price"
+              {cloneData != null &&
+              cloneData !== undefined &&
+              cloneData.length > 0 ? (
+                cloneData.map((val, index) => (
+                  <>
+                    <Spin spinning={deleteLoading === val.productId}>
+                      <Card
+                        key={`tracker${index}`}
+                        style={{
+                          width:
+                            containerWidth <= 650
+                              ? "90vw"
+                              : containerWidth > 650 && containerWidth <= 900
+                              ? "44vw"
+                              : containerWidth > 900 && containerWidth <= 1200
+                              ? "400px"
+                              : "30vw",
+                          height:
+                            priceHistoryData != null &&
+                            priceHistoryData !== undefined &&
+                            priceHistoryData.length > 0 &&
+                            priceHistoryData.find((x) =>
+                              val.url.includes(x.url)
+                            ) !== undefined
+                              ? 490
+                              : 455,
+                          margin: "15px",
+                        }}
+                        actions={[
+                          <Button
+                            onClick={() => navigate(`/?url=${val.url}`)}
+                            type="text"
+                            icon={<LineChartOutlined />}
                           >
-                            <Button type="text" icon={<EditOutlined />}>
-                              Alert Price
-                            </Button>
-                          </Popover>
-                        </>,
-                        <Button
-                          type="text"
-                          style={{
-                            width: "90%",
-                            maxWidth: "120px",
-                          }}
-                          onClick={() => openInNewTab(val.url)}
-                        >
-                          <Text strong>{val.domain}</Text>
-                        </Button>,
-                      ]}
-                      cover={
-                        <img
-                          alt="product_image"
-                          src={val.image}
-                          style={{
-                            textAlign: "center",
-                            padding: "10px",
-                            width: "280px",
-                            height: "220px",
-                          }}
+                            History
+                          </Button>,
+                          <>
+                            <Popover
+                              trigger="click"
+                              content={content(val)}
+                              title="Update Alert Price"
+                            >
+                              <Button type="text" icon={<EditOutlined />}>
+                                Alert Price
+                              </Button>
+                            </Popover>
+                          </>,
+                          <Button
+                            type="text"
+                            style={{
+                              width: "90%",
+                              maxWidth: "120px",
+                            }}
+                            onClick={() => openInNewTab(val.url)}
+                          >
+                            <Text strong>{val.domain}</Text>
+                          </Button>,
+                        ]}
+                        cover={
+                          <img
+                            alt="product_image"
+                            src={val.image}
+                            style={{
+                              textAlign: "center",
+                              padding: "10px",
+                              width: "280px",
+                              height: "220px",
+                            }}
+                          />
+                        }
+                      >
+                        <CloseOutlined
+                          className="tracker-close-button"
+                          onClick={() => handleDelete(val.productId)}
                         />
-                      }
-                    >
-                      <CloseOutlined
-                        className="tracker-close-button"
-                        onClick={() => handleDelete(val.productId)}
-                      />
-                      <Meta
-                        style={{ textAlign: "left" }}
-                        title={val.title}
-                        description={
-                          <div>
-                            {val.rating != null &&
-                            val.rating !== undefined &&
-                            val.rating.totalRated != null &&
-                            val.rating.totalRated !== undefined &&
-                            val.rating.totalRated !== "" ? (
-                              <Tag color="#2F903B">
-                                {val.rating.ratingCount} |{" "}
-                                {val.rating.totalRated}
-                              </Tag>
-                            ) : (
-                              <Tag color="#C6C6C6">Not Rated</Tag>
-                            )}
-                            {Object.keys(val.price).length > 0 && (
-                              <div className="pdp-price-container">
-                                <Title
-                                  level={2}
-                                  style={{ margin: "0", marginRight: "5px" }}
-                                >
-                                  ₹{fmt.format(val.price.discountPrice)}
-                                </Title>
-                                {val.price.discountPrice !==
-                                  val.price.originalPrice && (
-                                  <>
-                                    <Text
-                                      type="secondary"
-                                      style={{
-                                        fontSize: "18px",
-                                        marginRight: "5px",
-                                      }}
-                                      delete
-                                      strong
-                                    >
-                                      ₹{fmt.format(val.price.originalPrice)}
-                                    </Text>
-                                    <Title
-                                      level={5}
-                                      style={{
-                                        color: "#07976A",
-                                        fontWeight: "bolder",
-                                        margin: "0",
-                                      }}
-                                    >
-                                      {Math.floor(
-                                        ((val.price.originalPrice -
-                                          val.price.discountPrice) /
-                                          val.price.originalPrice) *
-                                          100
-                                      )}
-                                      % off
-                                    </Title>
-                                  </>
-                                )}
-                              </div>
-                            )}
-                            {priceHistoryData != null &&
-                              priceHistoryData !== undefined &&
-                              priceHistoryData.length > 0 &&
-                              priceHistoryData.find((x) =>
-                                val.url.includes(x.url)
-                              ) !== undefined && (
-                                <div style={{ marginTop: "10px" }}>
-                                  <Space size={[0, "small"]}>
-                                    <Tag bordered={false} color="#87D068">
-                                      MinPrice:&nbsp;
-                                      {
-                                        priceHistoryData.find((x) =>
-                                          val.url.includes(x.url)
-                                        ).minimumPrice
-                                      }
-                                    </Tag>
-
-                                    <Tag
-                                      icon={
-                                        priceHistoryData.find((x) =>
-                                          val.url.includes(x.url)
-                                        ).currentPrice <
-                                          val.price.discountPrice && (
-                                          <ArrowDownOutlined className="price_dropped" />
-                                        )
-                                      }
-                                      bordered={false}
-                                      color={
-                                        priceHistoryData.find((x) =>
-                                          val.url.includes(x.url)
-                                        ).currentPrice < val.price.discountPrice
-                                          ? "#108EE9"
-                                          : "blue"
-                                      }
-                                    >
-                                      CurPrice:&nbsp;
-                                      {
-                                        priceHistoryData.find((x) =>
-                                          val.url.includes(x.url)
-                                        ).currentPrice
-                                      }
-                                    </Tag>
-                                    <Tag bordered={false} color="#CD201F">
-                                      MaxPrice:&nbsp;
-                                      {
-                                        priceHistoryData.find((x) =>
-                                          val.url.includes(x.url)
-                                        ).maximumPrice
-                                      }
-                                    </Tag>
-                                  </Space>
+                        <Meta
+                          style={{ textAlign: "left" }}
+                          title={val.title}
+                          description={
+                            <div>
+                              {val.rating != null &&
+                              val.rating !== undefined &&
+                              val.rating.totalRated != null &&
+                              val.rating.totalRated !== undefined &&
+                              val.rating.totalRated !== "" ? (
+                                <Tag color="#2F903B">
+                                  {val.rating.ratingCount} |{" "}
+                                  {val.rating.totalRated}
+                                </Tag>
+                              ) : (
+                                <Tag color="#C6C6C6">Not Rated</Tag>
+                              )}
+                              {Object.keys(val.price).length > 0 && (
+                                <div className="pdp-price-container">
+                                  <Title
+                                    level={2}
+                                    style={{ margin: "0", marginRight: "5px" }}
+                                  >
+                                    ₹{fmt.format(val.price.discountPrice)}
+                                  </Title>
+                                  {val.price.discountPrice !==
+                                    val.price.originalPrice && (
+                                    <>
+                                      <Text
+                                        type="secondary"
+                                        style={{
+                                          fontSize: "18px",
+                                          marginRight: "5px",
+                                        }}
+                                        delete
+                                        strong
+                                      >
+                                        ₹{fmt.format(val.price.originalPrice)}
+                                      </Text>
+                                      <Title
+                                        level={5}
+                                        style={{
+                                          color: "#07976A",
+                                          fontWeight: "bolder",
+                                          margin: "0",
+                                        }}
+                                      >
+                                        {Math.floor(
+                                          ((val.price.originalPrice -
+                                            val.price.discountPrice) /
+                                            val.price.originalPrice) *
+                                            100
+                                        )}
+                                        % off
+                                      </Title>
+                                    </>
+                                  )}
                                 </div>
                               )}
-                          </div>
-                        }
-                      />
-                    </Card>
-                  </Spin>
+                              {priceHistoryData != null &&
+                                priceHistoryData !== undefined &&
+                                priceHistoryData.length > 0 &&
+                                priceHistoryData.find((x) =>
+                                  val.url.includes(x.url)
+                                ) !== undefined && (
+                                  <div style={{ marginTop: "10px" }}>
+                                    <Space size={[0, "small"]}>
+                                      <Tag bordered={false} color="#87D068">
+                                        MinPrice:&nbsp;
+                                        {
+                                          priceHistoryData.find((x) =>
+                                            val.url.includes(x.url)
+                                          ).minimumPrice
+                                        }
+                                      </Tag>
+
+                                      <Tag
+                                        icon={
+                                          priceHistoryData.find((x) =>
+                                            val.url.includes(x.url)
+                                          ).currentPrice <
+                                            val.price.discountPrice && (
+                                            <ArrowDownOutlined className="price_dropped" />
+                                          )
+                                        }
+                                        bordered={false}
+                                        color={
+                                          priceHistoryData.find((x) =>
+                                            val.url.includes(x.url)
+                                          ).currentPrice <
+                                          val.price.discountPrice
+                                            ? "#108EE9"
+                                            : "blue"
+                                        }
+                                      >
+                                        CurPrice:&nbsp;
+                                        {
+                                          priceHistoryData.find((x) =>
+                                            val.url.includes(x.url)
+                                          ).currentPrice
+                                        }
+                                      </Tag>
+                                      <Tag bordered={false} color="#CD201F">
+                                        MaxPrice:&nbsp;
+                                        {
+                                          priceHistoryData.find((x) =>
+                                            val.url.includes(x.url)
+                                          ).maximumPrice
+                                        }
+                                      </Tag>
+                                    </Space>
+                                  </div>
+                                )}
+                            </div>
+                          }
+                        />
+                      </Card>
+                    </Spin>
+                  </>
                 ))
               ) : (
                 <div
@@ -564,7 +700,7 @@ const Trackers = () => {
           )}
         </div>
       </Spin>
-    </>
+    </div>
   );
 };
 

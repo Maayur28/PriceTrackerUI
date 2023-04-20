@@ -10,7 +10,7 @@ const Nav = () => {
   const navigate = useNavigate();
 
   return (
-    <Layout style={{ height: "60px" }}>
+    <Layout style={{ height: "60px", position: "relative" }}>
       <Header
         style={{
           width: "100%",

@@ -2,8 +2,8 @@
   display: flex;
   width: 98vw;
   min-height: 88vh;
-  margin-top: 20px;
-  justify-content: flex-start;
+  margin-top: 30px;
+  justify-content: space-evenly;
   flex-wrap: wrap;
 }
 .ant-card-cover {
@@ -18,14 +18,37 @@
   cursor: pointer;
 }
 .price_dropped {
-  -webkit-animation: mover 0.7s infinite  alternate;
-  animation: mover 0.7s infinite  alternate;
+  -webkit-animation: mover 0.7s infinite alternate;
+  animation: mover 0.7s infinite alternate;
 }
 @-webkit-keyframes mover {
-  0% { transform: translateY(-5px); }
-  100% { transform: translateY(5px); }
+  0% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(5px);
+  }
 }
 @keyframes mover {
-  0% { transform: translateY(-5px); }
-  100% { transform: translateY(5px); }
+  0% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(5px);
+  }
+}
+.sort_by_container {
+  position: absolute;
+  right: 3%;
+  margin-top: -20px;
+}
+.sort_by_container .ant-select-selector .ant-select-selection-item {
+  text-align: right;
+}
+.sort_by_label{
+  width: 50px;
+  position: absolute;
+  right: 77%;
+  top: 15%;
+  z-index: 1;
 }

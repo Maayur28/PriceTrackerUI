@@ -3,6 +3,8 @@ import Cookies from "js-cookie";
 const secondsIn1Minute = 60;
 const millisecondsIn1Second = 1000;
 const loginCookiesExpiryTimeInDays = 7;
+const expiryTimeInMinutes = 60;
+
 const trackerKey = "priceTracker_trackers";
 const trackerPriceHistoryKey = "priceTracker_trackersPriceHistory";
 
@@ -40,7 +42,6 @@ export const removeTrackerStorage = () => {
 };
 
 export const addTracker = (key, value) => {
-  let expiryTimeInMinutes = 60;
   const now = new Date();
 
   const item = {
