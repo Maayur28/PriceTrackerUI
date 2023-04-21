@@ -7,3 +7,7 @@
 .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
   background-color: transparent;
 }
+.ant-dropdown-menu {
+  max-height: 250px;
+  overflow: auto;
+}
