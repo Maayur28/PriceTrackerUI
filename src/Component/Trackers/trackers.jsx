@@ -120,7 +120,11 @@ const Trackers = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tempData]);
 
-  const fetchTracker = async (page = 0, defaultFilterQuery = {}) => {
+  const fetchTracker = async (
+    page = 0,
+    defaultFilterQuery = {},
+    defaultSortBy = null
+  ) => {
     if (
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
@@ -138,7 +142,9 @@ const Trackers = () => {
         const response = await axios.post(
           `https://price-tracker-orchestration.vercel.app/gettracker?page=${
             page === 0 ? currentPage : page
-          }&limit=${limit}&sortBy=${sortBy}`,
+          }&limit=${limit}&sortBy=${
+            defaultSortBy == null ? sortBy : defaultSortBy
+          }`,
           JSON.stringify({
             accessToken: Cookies.get("accessToken"),
             refreshToken: Cookies.get("refreshToken"),
@@ -361,19 +367,25 @@ const Trackers = () => {
     if (
       filterQuery["company"] !== "" ||
       filterQuery["priceDropped"] !== "" ||
-      filterQuery["search"] !== ""
+      filterQuery["search"] !== "" ||
+      tempData.sortBy !== "Relevance"
     ) {
       setFilterQuery({
         company: "",
         priceDropped: "",
         search: "",
       });
-      fetchTracker(0, {
-        company: "",
-        priceDropped: "",
-        search: "",
-      });
+      fetchTracker(
+        0,
+        {
+          company: "",
+          priceDropped: "",
+          search: "",
+        },
+        "Relevance"
+      );
     } else {
+      setSortBy("Relevance");
       setOpen(false);
     }
   };
