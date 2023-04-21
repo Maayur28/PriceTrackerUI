@@ -32,65 +32,68 @@ const { Meta } = Card;
 const { Title, Text } = Typography;
 
 const Trackers = () => {
-  const trackerKey = "priceTracker_trackers";
-  const trackerPriceHistoryKey = "priceTracker_trackersPriceHistory";
   const containerWidth = window.innerWidth;
-  const [sortByValue, setSortByValue] = useState("Relevance");
+  const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [currentPage, setCurrentPage] = useState(
-    getTracker(trackerKey) == null
-      ? 1
-      : getTracker(trackerKey).currentPage == null
-      ? 1
-      : getTracker(trackerKey).currentPage
-  );
-  const [totalPage, setTotalPage] = useState(
-    getTracker(trackerKey) == null
-      ? 0
-      : getTracker(trackerKey).total == null
-      ? 0
-      : getTracker(trackerKey).total
-  );
-  const [limit, setLimit] = useState(
-    getTracker(trackerKey) == null
-      ? 100
-      : getTracker(trackerKey).limit == null
-      ? 100
-      : getTracker(trackerKey).limit
-  );
+  const trackerKey = "priceTracker_trackers";
 
-  const [priceHistoryCalled, setPriceHistoryCalled] = useState(
-    getTracker(trackerPriceHistoryKey) == null ? false : true
-  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [count, setCount] = useState(0);
+  const [sortBy, setSortBy] = useState("Relevance");
+  const [filterCount, setFilterCount] = useState(0);
+  const [filterQuery, setFilterQuery] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+  const [renderData, setRenderData] = useState(false);
 
-  const navigate = useNavigate();
   const [loading, setloading] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
-  const [edit, setEdit] = useState("");
-  const [data, setData] = useState(
-    getTracker(trackerKey) == null
-      ? []
-      : getTracker(trackerKey).products == null
-      ? []
-      : getTracker(trackerKey).products
-  );
-  const [cloneData, setcloneData] = useState(
-    getTracker(trackerKey) == null
-      ? []
-      : getTracker(trackerKey).products == null
-      ? []
-      : getTracker(trackerKey).products
-  );
-  const [priceHistoryData, setPriceHistoryData] = useState(
-    getTracker(trackerPriceHistoryKey) == null
-      ? []
-      : getTracker(trackerPriceHistoryKey)
-  );
   const [deleteLoading, setDeleteLoading] = useState("");
+  const [edit, setEdit] = useState("");
   const [alertPrice, setalertPrice] = useState(0);
 
-  const fetchTracker = async (page = 0, limit = 100) => {
+  const [tempData, setTempData] = useState(
+    getTracker(trackerKey) == null ? [] : getTracker(trackerKey)
+  );
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    if (
+      tempData == null ||
+      tempData === undefined ||
+      tempData.data == null ||
+      tempData.data === undefined ||
+      tempData.data.length === 0
+    ) {
+      fetchTracker();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (
+      !loading &&
+      tempData != null &&
+      tempData !== undefined &&
+      tempData.data != null &&
+      tempData.data.length > 0
+    ) {
+      addTracker(trackerKey, tempData);
+      setCurrentPage(tempData.page);
+      setLimit(tempData.limit);
+      setCount(tempData.count);
+      setFilterCount(tempData.filterCount);
+      setTotalCount(tempData.totalCount);
+      setSortBy(tempData.sortBy);
+      setFilterQuery(tempData.filterQuery);
+      setData(tempData.data);
+      setRenderData(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tempData]);
+
+  const fetchTracker = async (page = 0, sortValue = null) => {
     if (
       Cookies.get("accessToken") === undefined ||
       Cookies.get("refreshToken") === undefined
@@ -104,11 +107,12 @@ const Trackers = () => {
     } else {
       setloading(true);
       try {
-        setPriceHistoryCalled(false);
         const response = await axios.post(
-          `https://price-tracker-auth.vercel.app/gettracker?page=${
+          `https://price-tracker-orchestration.vercel.app/gettracker?page=${
             page === 0 ? currentPage : page
-          }&limit=${limit}`,
+          }&limit=${limit}&sortBy=${
+            sortValue == null ? sortBy : sortValue
+          }&filter=${filterQuery}`,
           JSON.stringify({
             accessToken: Cookies.get("accessToken"),
             refreshToken: Cookies.get("refreshToken"),
@@ -124,18 +128,11 @@ const Trackers = () => {
           response.data != null &&
           response.data !== undefined &&
           response.data !== "" &&
-          response.data.data.products != null &&
-          response.data.data.products !== undefined &&
-          response.data.data.products.length > 0
+          response.data.data.data != null &&
+          response.data.data.data !== undefined &&
+          response.data.data.data.length > 0
         ) {
-          if (response.data) {
-            setData(response.data.data.products);
-            setSortByValue("Relevance");
-            setTotalPage(response.data.data.total);
-            setCurrentPage(response.data.data.currentPage);
-            setLimit(response.data.data.limit);
-            addTracker(trackerKey, response.data.data);
-          }
+          setTempData(response.data.data);
         }
         setloading(false);
       } catch (error) {
@@ -153,81 +150,6 @@ const Trackers = () => {
     fetchTracker(pageNumber);
   };
 
-  const getUrlsList = () => {
-    let urlList = [];
-    data.forEach((element) => {
-      urlList.push(element.url);
-    });
-    let urls = {
-      urls: urlList,
-    };
-    return urls;
-  };
-
-  const fetchPriceHistory = async () => {
-    if (
-      Cookies.get("accessToken") === undefined ||
-      Cookies.get("refreshToken") === undefined
-    ) {
-      clearLogout();
-      messageApi.open({
-        type: "error",
-        content: "Login to view trackers",
-      });
-      navigate("/login");
-    } else {
-      let urlList = getUrlsList();
-      try {
-        const response = await axios.post(
-          "https://stingray-app-omwgg.ondigitalocean.app/getPriceHistoryUrls",
-          //"http://localhost:9000/getPriceHistoryUrls",
-          urlList,
-          {
-            headers: {
-              "Content-type": "application/json; charset=UTF-8",
-            },
-          }
-        );
-        if (
-          response.status === 200 &&
-          response.data != null &&
-          response.data !== undefined &&
-          response.data !== ""
-        ) {
-          if (response.data) {
-            setPriceHistoryData(response.data.data);
-            addTracker(trackerPriceHistoryKey, response.data.data);
-          }
-        }
-      } catch (error) {
-        messageApi.open({
-          type: "error",
-          content: error.response.data,
-        });
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (data == null || data === undefined || data.length === 0) fetchTracker();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (
-      !loading &&
-      !priceHistoryCalled &&
-      data != null &&
-      data !== undefined &&
-      data.length > 0
-    ) {
-      setcloneData([]);
-      setPriceHistoryCalled(true);
-      fetchPriceHistory();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
   const handleAlertPrice = async () => {
     if (
       Cookies.get("accessToken") === undefined ||
@@ -240,7 +162,6 @@ const Trackers = () => {
       });
     } else {
       if (alertPrice > 0) {
-        setPriceHistoryCalled(false);
         setbuttonLoading(true);
         try {
           let obj = {};
@@ -249,7 +170,7 @@ const Trackers = () => {
           obj.accessToken = Cookies.get("accessToken");
           obj.refreshToken = Cookies.get("refreshToken");
           const response = await axios.put(
-            `https://price-tracker-auth.vercel.app/updatetracker?page=${currentPage}&limit=${limit}`,
+            `https://price-tracker-orchestration.vercel.app/updatetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}&filter=${filterQuery}`,
             obj,
             {
               headers: {
@@ -262,22 +183,15 @@ const Trackers = () => {
             response.data != null &&
             response.data !== undefined &&
             response.data !== "" &&
-            response.data.data.products != null &&
-            response.data.data.products !== undefined &&
-            response.data.data.products.length > 0
+            response.data.data.data != null &&
+            response.data.data.data !== undefined &&
+            response.data.data.data.length > 0
           ) {
-            if (response.data) {
-              setData(response.data.data.products);
-              setSortByValue("Relevance");
-              setTotalPage(response.data.data.total);
-              setCurrentPage(response.data.data.currentPage);
-              setLimit(response.data.data.limit);
-              addTracker(trackerKey, response.data.data);
-              messageApi.open({
-                type: "success",
-                content: "Updated",
-              });
-            }
+            setTempData(response.data.data);
+            messageApi.open({
+              type: "success",
+              content: "Updated",
+            });
           }
           setbuttonLoading(false);
           setEdit("");
@@ -311,13 +225,12 @@ const Trackers = () => {
     } else {
       try {
         setDeleteLoading(productId);
-        setPriceHistoryCalled(false);
         let obj = {};
         obj.productId = productId;
         obj.accessToken = Cookies.get("accessToken");
         obj.refreshToken = Cookies.get("refreshToken");
         const response = await axios.put(
-          `https://price-tracker-auth.vercel.app/deletetracker?page=${currentPage}&limit=${limit}`,
+          `https://price-tracker-orchestration.vercel.app/deletetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}&filter=${filterQuery}`,
           obj,
           {
             headers: {
@@ -330,23 +243,16 @@ const Trackers = () => {
           response.data != null &&
           response.data !== undefined &&
           response.data !== "" &&
-          response.data.data.products != null &&
-          response.data.data.products !== undefined &&
-          response.data.data.products.length > 0
+          response.data.data.data != null &&
+          response.data.data.data !== undefined &&
+          response.data.data.data.length > 0
         ) {
-          if (response.data) {
-            setData(response.data.data.products);
-            setSortByValue("Relevance");
-            setTotalPage(response.data.data.total);
-            setCurrentPage(response.data.data.currentPage);
-            setLimit(response.data.data.limit);
-            addTracker(trackerKey, response.data.data);
-            setDeleteLoading("");
-            messageApi.open({
-              type: "success",
-              content: "Deleted",
-            });
-          }
+          setTempData(response.data.data);
+          setDeleteLoading("");
+          messageApi.open({
+            type: "success",
+            content: "Deleted",
+          });
         }
       } catch (error) {
         setDeleteLoading("");
@@ -358,84 +264,10 @@ const Trackers = () => {
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      sortData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortByValue, data, priceHistoryData]);
-
-  const handleChange = (val) => {
-    let value =
-      val == null || val === undefined || val === "" ? sortByValue : val;
-    setSortByValue(value);
-  };
-
-  const sortData = () => {
-    let value = sortByValue;
-    if (value === "Relevance") {
-      setcloneData(data);
-    } else if (
-      priceHistoryData != null &&
-      priceHistoryData !== undefined &&
-      priceHistoryData.length > 1 &&
-      data != null &&
-      data !== undefined &&
-      data.length > 1
-    ) {
-      if (value === "CurPrice : Low to High") {
-        priceHistoryData.sort((a, b) => a.currentPrice - b.currentPrice);
-        let newData = [];
-        priceHistoryData.forEach((element) => {
-          data.every((x) => {
-            if (x.url.includes(element.url)) {
-              newData.push(x);
-              return false;
-            } else return true;
-          });
-        });
-        setcloneData(newData);
-      }
-      if (value === "CurPrice : High to Low") {
-        priceHistoryData.sort((a, b) => b.currentPrice - a.currentPrice);
-        let newData = [];
-        priceHistoryData.forEach((element) => {
-          data.every((x) => {
-            if (x.url.includes(element.url)) {
-              newData.push(x);
-              return false;
-            } else return true;
-          });
-        });
-        setcloneData(newData);
-      }
-      if (value === "Maximum Price Drop") {
-        let newPriceHistoryData = [];
-        data.forEach((element) => {
-          priceHistoryData.every((x) => {
-            if (x.url.includes(element.url)) {
-              let obj = {};
-              obj.currentPrice = element.price.discountPrice - x.currentPrice;
-              obj.url = x.url;
-              newPriceHistoryData.push(obj);
-              return false;
-            } else return true;
-          });
-        });
-        newPriceHistoryData.sort((a, b) => b.currentPrice - a.currentPrice);
-        let newData = [];
-        newPriceHistoryData.forEach((element) => {
-          data.every((x) => {
-            if (x.url.includes(element.url)) {
-              newData.push(x);
-              return false;
-            } else return true;
-          });
-        });
-        setcloneData(newData);
-      }
-    } else {
-      setcloneData(data);
+  const handleChange = (value) => {
+    if (value !== sortBy) {
+      setSortBy(value);
+      fetchTracker(currentPage, value);
     }
   };
 
@@ -487,15 +319,16 @@ const Trackers = () => {
   return (
     <div>
       <Spin tip="Loading..." spinning={loading}>
-        {cloneData != null &&
-          cloneData !== undefined &&
-          cloneData.length > 0 && (
+        {renderData &&
+          data != null &&
+          data !== undefined &&
+          data.length > 0 && (
             <div className="sort_by_container">
               <Text strong className="sort_by_label">
                 Sort By:
               </Text>
               <Select
-                value={sortByValue}
+                value={sortBy}
                 style={{
                   width: 225,
                 }}
@@ -506,15 +339,15 @@ const Trackers = () => {
                     label: "Relevance",
                   },
                   {
-                    value: "CurPrice : Low to High",
+                    value: "CurPrice:L2H",
                     label: "CurPrice : Low to High",
                   },
                   {
-                    value: "CurPrice : High to Low",
+                    value: "CurPrice:H2L",
                     label: "CurPrice : High to Low",
                   },
                   {
-                    value: "Maximum Price Drop",
+                    value: "MPD",
                     label: "Maximum Price Drop",
                   },
                 ]}
@@ -523,12 +356,10 @@ const Trackers = () => {
           )}
         {contextHolder}
         <div className="trackers-container">
-          {!loading && (
+          {renderData && (
             <>
-              {cloneData != null &&
-              cloneData !== undefined &&
-              cloneData.length > 0 ? (
-                cloneData.map((val, index) => (
+              {data != null && data !== undefined && data.length > 0 ? (
+                data.map((val, index) => (
                   <>
                     <Spin spinning={deleteLoading === val.productId}>
                       <Card
@@ -543,15 +374,8 @@ const Trackers = () => {
                               ? "400px"
                               : "30vw",
                           height:
-                            priceHistoryData != null &&
-                            priceHistoryData !== undefined &&
-                            priceHistoryData.length > 0 &&
-                            priceHistoryData.find((x) =>
-                              val.url.includes(x.url)
-                            ) !== undefined
-                              ? priceHistoryData.find((x) =>
-                                  val.url.includes(x.url)
-                                ).currentPrice < val.price.discountPrice
+                            val.currentPrice !== undefined
+                              ? val.currentPrice < val.price.discountPrice
                                 ? 510
                                 : 490
                               : 455,
@@ -664,76 +488,53 @@ const Trackers = () => {
                                 </div>
                               )}
 
-                              {priceHistoryData != null &&
-                                priceHistoryData !== undefined &&
-                                priceHistoryData.length > 0 &&
-                                priceHistoryData.find((x) =>
-                                  val.url.includes(x.url)
-                                ) !== undefined && (
-                                  <>
-                                    {priceHistoryData.find((x) =>
-                                      val.url.includes(x.url)
-                                    ).currentPrice <
-                                      val.price.discountPrice && (
-                                      <Title
-                                        level={5}
-                                        style={{
-                                          margin: "0",
-                                          color: "#7F4574",
-                                          fontWeight: "bolder",
-                                        }}
-                                      >
-                                        <ArrowDownOutlined className="price_dropped" />
-                                        Price dropped by&nbsp; ₹
-                                        {fmt.format(
-                                          val.price.discountPrice -
-                                            priceHistoryData.find((x) =>
-                                              val.url.includes(x.url)
-                                            ).currentPrice
-                                        )}
-                                      </Title>
-                                    )}
-                                    <div style={{ marginTop: "10px" }}>
-                                      <Space size={[0, "small"]}>
-                                        <Tag bordered={false} color="#87D068">
-                                          MinPrice:&nbsp;
-                                          {
-                                            priceHistoryData.find((x) =>
-                                              val.url.includes(x.url)
-                                            ).minimumPrice
-                                          }
-                                        </Tag>
+                              {val.currentPrice !== undefined && (
+                                <>
+                                  {val.currentPrice <
+                                    val.price.discountPrice && (
+                                    <Title
+                                      level={5}
+                                      style={{
+                                        margin: "0",
+                                        color: "#7F4574",
+                                        fontWeight: "bolder",
+                                      }}
+                                    >
+                                      <ArrowDownOutlined className="price_dropped" />
+                                      Price dropped by&nbsp; ₹
+                                      {fmt.format(
+                                        val.price.discountPrice -
+                                          val.currentPrice
+                                      )}
+                                    </Title>
+                                  )}
+                                  <div style={{ marginTop: "10px" }}>
+                                    <Space size={[0, "small"]}>
+                                      <Tag bordered={false} color="#87D068">
+                                        MinPrice:&nbsp;
+                                        {val.minimumPrice}
+                                      </Tag>
 
-                                        <Tag
-                                          bordered={false}
-                                          color={
-                                            priceHistoryData.find((x) =>
-                                              val.url.includes(x.url)
-                                            ).currentPrice <
-                                            val.price.discountPrice
-                                              ? "#108EE9"
-                                              : "blue"
-                                          }
-                                        >
-                                          CurPrice:&nbsp;
-                                          {
-                                            priceHistoryData.find((x) =>
-                                              val.url.includes(x.url)
-                                            ).currentPrice
-                                          }
-                                        </Tag>
-                                        <Tag bordered={false} color="#CD201F">
-                                          MaxPrice:&nbsp;
-                                          {
-                                            priceHistoryData.find((x) =>
-                                              val.url.includes(x.url)
-                                            ).maximumPrice
-                                          }
-                                        </Tag>
-                                      </Space>
-                                    </div>
-                                  </>
-                                )}
+                                      <Tag
+                                        bordered={false}
+                                        color={
+                                          val.currentPrice <
+                                          val.price.discountPrice
+                                            ? "#108EE9"
+                                            : "blue"
+                                        }
+                                      >
+                                        CurPrice:&nbsp;
+                                        {val.currentPrice}
+                                      </Tag>
+                                      <Tag bordered={false} color="#CD201F">
+                                        MaxPrice:&nbsp;
+                                        {val.maximumPrice}
+                                      </Tag>
+                                    </Space>
+                                  </div>
+                                </>
+                              )}
                             </div>
                           }
                         />
@@ -771,14 +572,16 @@ const Trackers = () => {
           )}
         </div>
       </Spin>
-      {cloneData != null && cloneData !== undefined && cloneData.length > 0 && (
-        <Pagination
-          style={{ margin: "10px 0" }}
-          defaultCurrent={currentPage}
-          total={totalPage}
-          onChange={onPageChange}
-          defaultPageSize={limit}
-        />
+      {data != null && data !== undefined && data.length > 0 && (
+        <>
+          <Pagination
+            style={{ margin: "10px 0" }}
+            defaultCurrent={currentPage}
+            total={filterCount}
+            onChange={onPageChange}
+            defaultPageSize={limit}
+          />
+        </>
       )}
     </div>
   );

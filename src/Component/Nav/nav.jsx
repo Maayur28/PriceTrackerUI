@@ -1,32 +1,54 @@
 import React, { useEffect, useState } from "react";
-import {
-  Layout,
-  Menu,
-  Image,
-  Dropdown,
-  Avatar,
-  Typography,
-  Divider,
-  Button,
-  Empty,
-} from "antd";
+import { Layout, Menu, Image, Dropdown, Empty } from "antd";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { BellOutlined } from "@ant-design/icons";
 import { handleLoginLogout } from "../../Util";
 import "./nav.css";
-const { Title, Text } = Typography;
+import { addNotification, getNotification } from "../../Cache";
+import { contructItems } from "./navUtil";
+
 const { Header } = Layout;
 
 const Nav = () => {
   const navigate = useNavigate();
+  const trackerNotification = "priceTracker_notification";
+
+  const [notifyData, setNotifyData] = useState(
+    getNotification(trackerNotification) == null ||
+      getNotification(trackerNotification) === undefined
+      ? []
+      : getNotification(trackerNotification)
+  );
 
   const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    if (
+      notifyData != null &&
+      notifyData !== undefined &&
+      notifyData.length > 0
+    ) {
+      contructItems({ notifyData: notifyData, setItems: setItems });
+    } else {
+      let item = [];
+      let obj = {};
+      obj.key = "no_notification";
+      obj.label = <Empty />;
+      item.push(obj);
+      setItems(item);
+    }
+  }, [notifyData]);
+
   useEffect(() => {
     if (
       Cookies.get("accessToken") !== undefined &&
-      Cookies.get("refreshToken") !== undefined
+      Cookies.get("refreshToken") !== undefined &&
+      (notifyData == null ||
+        notifyData === undefined ||
+        notifyData.length === 0)
     ) {
+      console.log("called");
       fetch("https://price-tracker-auth.vercel.app/getNotification", {
         method: "POST",
         body: JSON.stringify({
@@ -53,145 +75,18 @@ const Nav = () => {
             data.notification !== undefined &&
             data.notification.length > 0
           ) {
-            contructItems(data.notification);
+            setNotifyData(data.notification);
+            addNotification(trackerNotification, data.notification);
           } else {
-            contructItems([]);
+            setNotifyData([]);
           }
         })
         .catch((err) => {
           console.log("Not logged In!!");
         });
-    } else {
-      let item = [];
-      let obj = {};
-      obj.key = "no_notification";
-      obj.label = <Empty />;
-      item.push(obj);
-      setItems(item);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const dismissNotification = async () => {
-    if (
-      Cookies.get("accessToken") !== undefined &&
-      Cookies.get("refreshToken") !== undefined
-    ) {
-      fetch("https://price-tracker-auth.vercel.app/dismissNotification", {
-        method: "POST",
-        body: JSON.stringify({
-          accessToken: Cookies.get("accessToken"),
-          refreshToken: Cookies.get("refreshToken"),
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      })
-        .then(async (response) => {
-          if (response.status >= 200 && response.status <= 299) {
-            return response.json();
-          } else {
-            const text = await response.text();
-            throw new Error(text);
-          }
-        })
-        .then((data) => {
-          if (data.success === true) {
-            contructItems([]);
-          }
-        })
-        .catch((err) => {
-          console.log("Not logged In!!");
-        });
-    }
-  };
-
-  const openInNewTab = (url) => {
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
-
-  const contructItems = (notification) => {
-    let item = [];
-    if (
-      notification != null &&
-      notification !== undefined &&
-      notification.length > 0
-    ) {
-      let obj = {};
-      obj.key = "header_notify";
-      obj.label = (
-        <>
-          <div style={{ cursor: "default" }}>
-            <Button
-              onClick={dismissNotification}
-              type="text"
-              style={{ position: "absolute", right: "0", top: "0" }}
-            >
-              Dismiss
-            </Button>
-          </div>
-          <Divider
-            style={{ margin: "0", marginTop: "30px", marginBottom: "2px" }}
-          />
-        </>
-      );
-      item.push(obj);
-      notification.forEach((element) => {
-        let difference_ms = Date.now() - element.date;
-        //take out milliseconds
-        difference_ms = difference_ms / 1000;
-        let seconds = Math.floor(difference_ms % 60);
-        difference_ms = difference_ms / 60;
-        let minutes = Math.floor(difference_ms % 60);
-        difference_ms = difference_ms / 60;
-        let hours = Math.floor(difference_ms % 24);
-        let days = Math.floor(difference_ms / 24);
-        let obj = {};
-        obj.key = element._id;
-        obj.label = (
-          <div
-            style={{ display: "flex" }}
-            onClick={() => openInNewTab(element.url)}
-          >
-            <Avatar
-              shape="square"
-              size={56}
-              src={<img width="60px" src={element.image} alt="avatar" />}
-            />
-            <div style={{ marginLeft: "10px" }}>
-              <Title style={{ margin: "0" }} level={5}>
-                Price dropped by{" "}
-                <span style={{ color: "#7f4574", fontWeight: "bolder" }}>
-                  ₹{element.price}
-                </span>
-              </Title>
-              <Text ellipsis={true} style={{ maxWidth: "250px" }}>
-                {element.title}
-              </Text>
-              <div>
-                <Text type="secondary">
-                  {days === 0
-                    ? hours === 0
-                      ? minutes === 0
-                        ? `${seconds} seconds ago`
-                        : `${minutes} minutes ago`
-                      : `${hours} hours ago`
-                    : `${days} days ago`}
-                </Text>
-              </div>
-            </div>
-          </div>
-        );
-        item.push(obj);
-      });
-    } else {
-      let obj = {};
-      obj.key = "no_notification";
-      obj.label = <Empty />;
-      item.push(obj);
-    }
-    setItems(item);
-  };
 
   return (
     <Layout style={{ height: "60px", position: "relative" }}>
