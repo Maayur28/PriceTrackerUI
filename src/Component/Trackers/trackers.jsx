@@ -80,6 +80,7 @@ const Trackers = () => {
   };
   const onClose = () => {
     setOpen(false);
+    setFilterKey("0_Company_filter_sidenav");
   };
 
   const {
@@ -138,7 +139,7 @@ const Trackers = () => {
     } else {
       setloading(true);
       try {
-        setOpen(false);
+        onClose();
         const response = await axios.post(
           `https://price-tracker-orchestration.vercel.app/gettracker?page=${
             page === 0 ? currentPage : page
@@ -199,6 +200,7 @@ const Trackers = () => {
       if (alertPrice > 0) {
         setbuttonLoading(true);
         try {
+          onClose();
           let obj = {};
           obj.alertPrice = alertPrice;
           obj.productId = edit;
@@ -260,6 +262,7 @@ const Trackers = () => {
       });
     } else {
       try {
+        onClose();
         setDeleteLoading(productId);
         let obj = {};
         obj.productId = productId;
@@ -386,7 +389,7 @@ const Trackers = () => {
       );
     } else {
       setSortBy("Relevance");
-      setOpen(false);
+      onClose();
     }
   };
 
@@ -419,6 +422,7 @@ const Trackers = () => {
                 style={{ width: "140px" }}
                 mode="inline"
                 defaultSelectedKeys={["0_Company_filter_sidenav"]}
+                selectedKeys={[filterKey]}
                 items={contructTrackerItems()}
                 onSelect={(val) => setFilterKey(val.key)}
               />
