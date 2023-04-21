@@ -48,7 +48,6 @@ const Nav = () => {
         notifyData === undefined ||
         notifyData.length === 0)
     ) {
-      console.log("called");
       fetch("https://price-tracker-auth.vercel.app/getNotification", {
         method: "POST",
         body: JSON.stringify({

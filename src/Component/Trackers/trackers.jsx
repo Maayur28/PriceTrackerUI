@@ -406,14 +406,19 @@ const Trackers = () => {
             <Content>
               <div
                 style={{
-                  padding: 24,
-                  minHeight: "225px",
+                  padding: 16,
+                  minHeight: "180px",
                   background: colorBgContainer,
                 }}
               >
                 {filterKey.split("_")[0] === "0" ? (
                   <>
-                    <Title level={5}> Filter By Company Name</Title>
+                    <Title
+                      level={5}
+                      style={{ margin: "0", marginBottom: "10px" }}
+                    >
+                      Filter By Company Name
+                    </Title>
                     <Radio.Group
                       defaultValue={filterQuery["company"]}
                       buttonStyle="solid"
