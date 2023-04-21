@@ -28,7 +28,8 @@ const dismissNotification = async ({ setItems }) => {
       })
       .then((data) => {
         if (data.success === true) {
-          setItems(contructItems([]));
+          contructItems([]);
+          localStorage.removeItem("priceTracker_notification");
         }
       })
       .catch((err) => {
@@ -112,6 +113,7 @@ export const contructItems = ({ notifyData, setItems }) => {
     obj.key = "no_notification";
     obj.label = <Empty />;
     item.push(obj);
+    localStorage.removeItem("priceTracker_notification");
   }
   setItems(item);
 };

@@ -36,6 +36,7 @@ const Nav = () => {
       obj.key = "no_notification";
       obj.label = <Empty />;
       item.push(obj);
+      localStorage.removeItem("priceTracker_notification");
       setItems(item);
     }
   }, [notifyData]);
