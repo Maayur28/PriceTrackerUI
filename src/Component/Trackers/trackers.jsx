@@ -358,16 +358,24 @@ const Trackers = () => {
   );
 
   const handleReset = () => {
-    setFilterQuery({
-      company: "",
-      priceDropped: "",
-      search: "",
-    });
-    fetchTracker(0, {
-      company: "",
-      priceDropped: "",
-      search: "",
-    });
+    if (
+      filterQuery["company"] !== "" ||
+      filterQuery["priceDropped"] !== "" ||
+      filterQuery["search"] !== ""
+    ) {
+      setFilterQuery({
+        company: "",
+        priceDropped: "",
+        search: "",
+      });
+      fetchTracker(0, {
+        company: "",
+        priceDropped: "",
+        search: "",
+      });
+    } else {
+      setOpen(false);
+    }
   };
 
   const getDrawer = () => {
