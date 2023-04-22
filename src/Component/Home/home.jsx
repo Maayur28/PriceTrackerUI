@@ -1,13 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { Image, message } from "antd";
+import { Image, Typography, message } from "antd";
 import { useSearchParams } from "react-router-dom";
 import TimelineStatus from "../TimelineStatus/timelineStatus";
 import PDP from "../PDP/pdp";
 import PriceHistory from "../PriceHistory/priceHistory";
 import { fetchData } from "../../Apis";
 import { validateURL } from "./homeUtil";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
 import "./home.css";
 import SearchComponent from "./SearchComponent";
+
+const { Title } = Typography;
+
+const carousel = (slider) => {
+  const z = 300;
+  function rotate() {
+    const deg = 360 * slider.track.details.progress;
+    slider.container.style.transform = `translateZ(-${z}px) rotateY(${-deg}deg)`;
+  }
+  slider.on("created", () => {
+    const deg = 360 / slider.slides.length;
+    slider.slides.forEach((element, idx) => {
+      element.style.transform = `rotateY(${deg * idx}deg) translateZ(${z}px)`;
+    });
+    rotate();
+  });
+  slider.on("detailsChanged", rotate);
+};
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -28,6 +48,16 @@ const Home = () => {
       return () => clearInterval(interval);
     }
   }, [currentIntervalTime, currentTimeline, loading]);
+
+  const [sliderRef] = useKeenSlider(
+    {
+      loop: true,
+      selector: ".carousel__cell",
+      renderMode: "custom",
+      mode: "free-snap",
+    },
+    [carousel]
+  );
 
   const onSearch = async (val) => {
     setCurrentTimeline(0);
@@ -83,12 +113,58 @@ const Home = () => {
       </div>
       {!loading && Object.keys(data).length === 0 ? (
         <div>
-          <Image
-            width="100vw"
-            height={window.innerHeight - 280}
-            preview={false}
-            src="/wave.png"
-          />
+          <Title
+            level={4}
+            style={{
+              color: "white",
+              fontWeight: "bolder",
+              width: "100vw",
+              position: "absolute",
+              margin: "auto",
+              bottom: "1%",
+              marginBottom: 10,
+            }}
+          >
+            Swipe and click to learn/see how it works
+          </Title>
+          <div
+            className="wrapper"
+            style={{
+              width: "100vw",
+              height: window.innerHeight - 280,
+              display: "flex",
+              alignItems: "center",
+              backgroundImage: "url(/wave1.png)",
+            }}
+          >
+            <div className="scene">
+              <div className="carousel keen-slider" ref={sliderRef}>
+                {[
+                  "slide1",
+                  "slide2",
+                  "slide3",
+                  "slide4",
+                  "slide5",
+                  "slide6",
+                  "slide7",
+                  "slide8",
+                  "slide9",
+                  "slide10",
+                ].map((val, index) => (
+                  <div
+                    className={`carousel__cell number-${val}`}
+                    key={`index_${index}_${val}`}
+                  >
+                    <Image
+                      width="100%"
+                      height="100%"
+                      src={`/PriceTrackerCarousel/${val}.png`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       ) : (
         <>
