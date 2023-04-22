@@ -404,7 +404,7 @@ const Trackers = () => {
           extra={
             <Space>
               <Button danger onClick={handleReset}>
-                Reset
+                Clear all
               </Button>
               <Button
                 onClick={() => fetchTracker(0)}
@@ -701,7 +701,7 @@ const Trackers = () => {
                                         : parseInt(val.currentPrice) ===
                                           parseInt(val.price.discountPrice)
                                         ? "Same Price"
-                                        : "Price increase by ₹"}
+                                        : "Price increased by ₹"}
                                       {fmt.format(
                                         val.price.discountPrice -
                                           val.currentPrice <
