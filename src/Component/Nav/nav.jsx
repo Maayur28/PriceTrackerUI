@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { BellOutlined } from "@ant-design/icons";
+import { BellOutlined, UserOutlined } from "@ant-design/icons";
 import { handleLoginLogout } from "../../Util";
 import "./nav.css";
 import { addNotification, getNotification } from "../../Cache";
@@ -251,22 +251,54 @@ const Nav = () => {
                 cursor: "pointer",
                 position: "absolute",
                 right: "1%",
-                marginRight: "110px",
+                marginRight: "150px",
                 marginTop: "20px",
+                width: "40px",
+                height: "40px",
               }}
             />
           </Dropdown>
           <Menu.SubMenu
             key="profile"
-            title={`Hello,
-                ${
-                  Cookies.get("accessToken") &&
-                  Cookies.get("accessToken").endsWith("=") &&
-                  Cookies.get("refreshToken") &&
-                  Cookies.get("profileName")
-                    ? Cookies.get("profileName")
-                    : "sign in"
-                }`}
+            title={
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                Hello,
+                {Cookies.get("accessToken") &&
+                Cookies.get("accessToken").endsWith("=") &&
+                Cookies.get("refreshToken") &&
+                Cookies.get("profileName")
+                  ? Cookies.get("profileName")
+                  : "sign in"}
+                <Avatar
+                  style={{
+                    marginLeft: "5px",
+                    backgroundColor: "#7F4574",
+                  }}
+                  src={
+                    Cookies.get("accessToken") &&
+                    Cookies.get("accessToken").endsWith("=") &&
+                    Cookies.get("refreshToken") ? (
+                      Cookies.get("profileImage") === null ||
+                      Cookies.get("profileImage") === undefined ||
+                      Cookies.get("profileImage") === "undefined" ||
+                      Cookies.get("profileImage") === "" ? (
+                        <UserOutlined />
+                      ) : (
+                        Cookies.get("profileImage")
+                      )
+                    ) : (
+                      <UserOutlined />
+                    )
+                  }
+                  size={32}
+                ></Avatar>
+              </div>
+            }
             style={{
               position: "absolute",
               right: "1px",
