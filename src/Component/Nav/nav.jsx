@@ -239,25 +239,27 @@ const Nav = () => {
               preview={false}
             />
           </Menu.Item>
-          <Dropdown
-            menu={{
-              items,
+          <div
+            style={{
+              fontSize: "20px",
+              cursor: "pointer",
+              position: "absolute",
+              right: "1%",
+              marginRight: "150px",
+              top: "0%",
+              width: "40px",
+              height: "100%",
             }}
-            placement="bottomLeft"
           >
-            <BellOutlined
-              style={{
-                fontSize: "20px",
-                cursor: "pointer",
-                position: "absolute",
-                right: "1%",
-                marginRight: "150px",
-                marginTop: "20px",
-                width: "40px",
-                height: "40px",
+            <Dropdown
+              menu={{
+                items,
               }}
-            />
-          </Dropdown>
+              placement="bottomLeft"
+            >
+              <BellOutlined />
+            </Dropdown>
+          </div>
           <Menu.SubMenu
             key="profile"
             title={

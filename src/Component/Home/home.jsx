@@ -9,7 +9,9 @@ import { validateURL } from "./homeUtil";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import "./home.css";
+import Cookies from "js-cookie";
 import SearchComponent from "./SearchComponent";
+import { clearLogout } from "../../Cache";
 
 const { Title } = Typography;
 
@@ -48,6 +50,14 @@ const Home = () => {
       return () => clearInterval(interval);
     }
   }, [currentIntervalTime, currentTimeline, loading]);
+
+  useEffect(() => {
+    if (
+      Cookies.get("accessToken") === undefined ||
+      Cookies.get("refreshToken") === undefined
+    )
+      clearLogout();
+  }, []);
 
   const [sliderRef] = useKeenSlider(
     {
