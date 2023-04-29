@@ -141,7 +141,7 @@ const Home = () => {
             className="wrapper"
             style={{
               width: "100vw",
-              height: window.innerHeight - 280,
+              height: window.innerHeight - 276,
               display: "flex",
               alignItems: "center",
               backgroundImage: "url(/wave1.png)",
