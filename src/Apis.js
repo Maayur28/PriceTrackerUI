@@ -1,7 +1,7 @@
 import axios from "axios";
 
-
-const ORCHESTRATION_BASE_URL = "https://price-tracker-orchestration.vercel.app"
+const ORCHESTRATION_BASE_URL =
+  "https://pricetracker-orch-agxf8.ondigitalocean.app";
 
 export const fetchData = async (val) => {
   let data = null;

@@ -141,7 +141,7 @@ const Trackers = () => {
       try {
         onClose();
         const response = await axios.post(
-          `https://price-tracker-orchestration.vercel.app/gettracker?page=${
+          `https://pricetracker-orch-agxf8.ondigitalocean.app/gettracker?page=${
             page === 0 ? currentPage : page
           }&limit=${limit}&sortBy=${
             defaultSortBy == null ? sortBy : defaultSortBy
@@ -208,7 +208,7 @@ const Trackers = () => {
           obj.refreshToken = Cookies.get("refreshToken");
           obj.filter = filterQuery;
           const response = await axios.put(
-            `https://price-tracker-orchestration.vercel.app/updatetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`,
+            `https://pricetracker-orch-agxf8.ondigitalocean.app/updatetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`,
             obj,
             {
               headers: {
@@ -270,7 +270,7 @@ const Trackers = () => {
         obj.refreshToken = Cookies.get("refreshToken");
         obj.filter = filterQuery;
         const response = await axios.put(
-          `https://price-tracker-orchestration.vercel.app/deletetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`,
+          `https://pricetracker-orch-agxf8.ondigitalocean.app/deletetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`,
           obj,
           {
             headers: {
