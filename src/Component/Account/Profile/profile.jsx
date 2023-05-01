@@ -93,7 +93,7 @@ const Profile = () => {
 
   const fetchProfile = () => {
     setIsSubmitting(true);
-    fetch("https://price-tracker-auth.vercel.app/verifyaccess", {
+    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyaccess", {
       method: "POST",
       body: JSON.stringify({
         accessToken: Cookies.get("accessToken"),
@@ -118,7 +118,7 @@ const Profile = () => {
             path: "",
           });
           fetch(
-            `https://price-tracker-auth.vercel.app/getprofile/${data.userid}`
+            `https://seahorse-app-xmw4g.ondigitalocean.app/getprofile/${data.userid}`
           )
             .then(async (response) => {
               if (response.status >= 200 && response.status <= 299) {
@@ -173,7 +173,7 @@ const Profile = () => {
   const onFinish = (values) => {
     if (usernameVerified) {
       setIsSubmitting(true);
-      fetch("https://price-tracker-auth.vercel.app/verifyaccess", {
+      fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyaccess", {
         method: "POST",
         body: JSON.stringify({
           accessToken: Cookies.get("accessToken"),
@@ -211,7 +211,7 @@ const Profile = () => {
               values.image = "";
             }
             fetch(
-              `https://price-tracker-auth.vercel.app/updateprofile/${data.userid}`,
+              `https://seahorse-app-xmw4g.ondigitalocean.app/updateprofile/${data.userid}`,
               {
                 method: "PUT",
                 body: JSON.stringify(values),
@@ -289,7 +289,7 @@ const Profile = () => {
     } else {
       setVerifyCalled(true);
       setValidating(true);
-      fetch("https://price-tracker-auth.vercel.app/verifyaccess", {
+      fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyaccess", {
         method: "POST",
         body: JSON.stringify({
           accessToken: Cookies.get("accessToken"),
@@ -314,7 +314,7 @@ const Profile = () => {
               path: "",
             });
             fetch(
-              `https://price-tracker-auth.vercel.app/validateusername/${form.getFieldValue(
+              `https://seahorse-app-xmw4g.ondigitalocean.app/validateusername/${form.getFieldValue(
                 "username"
               )}`
             )

@@ -25,7 +25,7 @@ const Login = () => {
 
   const onFinish = (values) => {
     setIsSubmitting(true);
-    fetch("https://price-tracker-auth.vercel.app/login", {
+    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/login", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {

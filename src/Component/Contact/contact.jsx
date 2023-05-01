@@ -23,7 +23,7 @@ const Contact = () => {
       obj.rating != null &&
       recaptchaValue != null
     ) {
-      fetch("https://price-tracker-auth.vercel.app/contact", {
+      fetch("https://seahorse-app-xmw4g.ondigitalocean.app/contact", {
         method: "POST",
         body: JSON.stringify(obj),
         headers: {

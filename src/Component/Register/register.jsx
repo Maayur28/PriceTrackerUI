@@ -29,7 +29,7 @@ const Register = () => {
   const onFinish = (values) => {
     setIsSubmitting(true);
     setError("");
-    fetch("https://price-tracker-auth.vercel.app/register", {
+    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/register", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {
@@ -59,7 +59,7 @@ const Register = () => {
     let obj = {};
     obj.sessionId = Cookies.get("sessionId");
     obj.otp = otp;
-    fetch("https://price-tracker-auth.vercel.app/verifyotp", {
+    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyotp", {
       method: "POST",
       body: JSON.stringify(obj),
       headers: {

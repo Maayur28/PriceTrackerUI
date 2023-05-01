@@ -61,7 +61,7 @@ const Nav = () => {
         notifyData === undefined ||
         notifyData.length === 0)
     ) {
-      fetch("https://price-tracker-auth.vercel.app/getNotification", {
+      fetch("https://seahorse-app-xmw4g.ondigitalocean.app/getNotification", {
         method: "POST",
         body: JSON.stringify({
           accessToken: Cookies.get("accessToken"),
@@ -105,16 +105,19 @@ const Nav = () => {
       Cookies.get("accessToken") !== undefined &&
       Cookies.get("refreshToken") !== undefined
     ) {
-      fetch("https://price-tracker-auth.vercel.app/dismissNotification", {
-        method: "POST",
-        body: JSON.stringify({
-          accessToken: Cookies.get("accessToken"),
-          refreshToken: Cookies.get("refreshToken"),
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      })
+      fetch(
+        "https://seahorse-app-xmw4g.ondigitalocean.app/dismissNotification",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            accessToken: Cookies.get("accessToken"),
+            refreshToken: Cookies.get("refreshToken"),
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        }
+      )
         .then(async (response) => {
           if (response.status >= 200 && response.status <= 299) {
             return response.json();

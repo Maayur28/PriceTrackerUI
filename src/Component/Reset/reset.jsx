@@ -12,7 +12,7 @@ const Reset = () => {
     let obj = {};
     obj.token = token;
     setIsSubmitting(true);
-    fetch("https://price-tracker-auth.vercel.app/reset", {
+    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/reset", {
       method: "POST",
       body: JSON.stringify(obj),
       headers: {
@@ -43,7 +43,7 @@ const Reset = () => {
 
   const onFinish = (values) => {
     values.token = token;
-    fetch("https://price-tracker-auth.vercel.app/reset", {
+    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/reset", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {

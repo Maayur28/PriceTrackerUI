@@ -13,7 +13,7 @@ const Password = () => {
 
   const onFinish = (values) => {
     setIsSubmitting(true);
-    fetch("https://price-tracker-auth.vercel.app/verifyaccess", {
+    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyaccess", {
       method: "POST",
       body: JSON.stringify({
         accessToken: Cookies.get("accessToken"),
@@ -38,7 +38,7 @@ const Password = () => {
             path: "",
           });
           fetch(
-            `https://price-tracker-auth.vercel.app/changepassword/${data.userid}`,
+            `https://seahorse-app-xmw4g.ondigitalocean.app/changepassword/${data.userid}`,
             {
               method: "POST",
               body: JSON.stringify(values),

@@ -53,7 +53,7 @@ const PDP = ({ searchParam, data }) => {
           data.accessToken = Cookies.get("accessToken");
           data.refreshToken = Cookies.get("refreshToken");
           const response = await axios.post(
-            "https://price-tracker-auth.vercel.app/addtracker",
+            "https://seahorse-app-xmw4g.ondigitalocean.app/addtracker",
             data,
             {
               headers: {
