@@ -555,7 +555,7 @@ const Trackers = () => {
                         <Card
                           key={`tracker${index}`}
                           style={{
-                            width: "370px",
+                            width: "375px",
                             height: 510,
                             margin: "5px",
                           }}
