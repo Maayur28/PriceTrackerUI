@@ -135,7 +135,7 @@ const Home = () => {
               marginBottom: 10,
             }}
           >
-            Swipe and click to learn/see how it works
+            Swipe and click to explore website functionality.
           </Title>
           <div
             className="wrapper"
