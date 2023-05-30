@@ -12,6 +12,7 @@
     "apexcharts": "^3.37.3",
     "axios": "^1.3.4",
     "indian-number-format": "^1.0.5",
+    "javascript-time-ago": "^2.5.9",
     "js-cookie": "^3.0.1",
     "keen-slider": "^6.8.5",
     "react": "^18.2.0",

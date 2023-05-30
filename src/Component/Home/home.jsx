@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, Typography, message } from "antd";
+import { Card, Divider, Image, Typography, message } from "antd";
 import { useSearchParams } from "react-router-dom";
 import TimelineStatus from "../TimelineStatus/timelineStatus";
 import PDP from "../PDP/pdp";
@@ -12,8 +12,12 @@ import "./home.css";
 import Cookies from "js-cookie";
 import SearchComponent from "./SearchComponent";
 import { clearLogout } from "../../Cache";
+import fmt from "indian-number-format";
+import Meta from "antd/es/card/Meta";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const carousel = (slider) => {
   const z = 300;
@@ -32,12 +36,15 @@ const carousel = (slider) => {
 };
 
 const Home = () => {
+  TimeAgo.addDefaultLocale(en);
+  const timeAgo = new TimeAgo("en-US");
   const [searchParams] = useSearchParams();
   const [loading, setloading] = useState(false);
   const [currentTimeline, setCurrentTimeline] = useState(0);
   const [currentIntervalTime, setCurrentIntervalTime] = useState(1000);
   const [messageApi, contextHolder] = message.useMessage();
   const [data, setData] = useState({});
+  const [droppedPrice, setDroppedPrice] = useState([]);
   const [priceHistory, setpriceHistory] = useState({});
 
   useEffect(() => {
@@ -57,6 +64,25 @@ const Home = () => {
       Cookies.get("refreshToken") === undefined
     )
       clearLogout();
+    fetch(`https://lobster-app-5zvv7.ondigitalocean.app/getDroppedPrice`)
+      .then(async (response) => {
+        if (response.status >= 200 && response.status <= 299) {
+          return response.json();
+        } else {
+          const text = await response.text();
+          throw new Error(text);
+        }
+      })
+      .then((val) => {
+        if (val.data != null && val.data !== undefined) {
+          setDroppedPrice(val.data);
+        } else {
+          setDroppedPrice([]);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   }, []);
 
   const [sliderRef] = useKeenSlider(
@@ -122,59 +148,211 @@ const Home = () => {
         />
       </div>
       {!loading && Object.keys(data).length === 0 ? (
-        <div>
-          <Title
-            level={4}
-            style={{
-              color: "white",
-              fontWeight: "bolder",
-              width: "100vw",
-              position: "absolute",
-              margin: "auto",
-              bottom: "1%",
-              marginBottom: 10,
-            }}
-          >
-            Swipe and click to explore website functionality.
-          </Title>
-          <div
-            className="wrapper"
-            style={{
-              width: "100vw",
-              height: window.innerHeight - 276,
-              display: "flex",
-              alignItems: "center",
-              backgroundImage: "url(/wave1.png)",
-            }}
-          >
-            <div className="scene">
-              <div className="carousel keen-slider" ref={sliderRef}>
-                {[
-                  "slide1",
-                  "slide2",
-                  "slide3",
-                  "slide4",
-                  "slide5",
-                  "slide6",
-                  "slide7",
-                  "slide8",
-                  "slide9",
-                  "slide10",
-                ].map((val, index) => (
-                  <div
-                    className={`carousel__cell number-${val}`}
-                    key={`index_${index}_${val}`}
-                  >
-                    <Image
-                      width="100%"
-                      height="100%"
-                      src={`/PriceTrackerCarousel/${val}.png`}
-                    />
-                  </div>
-                ))}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div>
+            <Title
+              level={4}
+              style={{
+                color: "white",
+                fontWeight: "bolder",
+                width: "100vw",
+                position: "absolute",
+                margin: "auto",
+                bottom: "1%",
+                marginBottom: 10,
+              }}
+            >
+              Swipe and click to explore website functionality.
+            </Title>
+            <div
+              className="wrapper"
+              style={{
+                width: "100vw",
+                height: window.innerHeight - 276,
+                display: "flex",
+                alignItems: "center",
+                backgroundImage: "url(/wave1.png)",
+              }}
+            >
+              <div className="scene">
+                <div className="carousel keen-slider" ref={sliderRef}>
+                  {[
+                    "slide1",
+                    "slide2",
+                    "slide3",
+                    "slide4",
+                    "slide5",
+                    "slide6",
+                    "slide7",
+                    "slide8",
+                    "slide9",
+                    "slide10",
+                  ].map((val, index) => (
+                    <div
+                      className={`carousel__cell number-${val}`}
+                      key={`index_${index}_${val}`}
+                    >
+                      <Image
+                        width="100%"
+                        height="100%"
+                        src={`/PriceTrackerCarousel/${val}.png`}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
+          {droppedPrice && droppedPrice.length > 0 && (
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  margin: "0px",
+                  marginLeft: "20px",
+                  textAlign: "left",
+                }}
+              >
+                <Title level={2}>Price Dropped</Title>
+                <Text
+                  type="secondary"
+                  style={{
+                    marginLeft: "30px",
+                    marginTop: "12px",
+                    fontSize: "22px",
+                  }}
+                >
+                  #latest deals
+                </Text>
+              </div>
+              <Divider />
+              {droppedPrice && droppedPrice.length > 9 ? (
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                  {droppedPrice.map((val, index) => (
+                    <Card
+                    onClick={()=> window.open(val.url, "_blank", "noopener,noreferrer")}
+                      hoverable
+                      key={index}
+                      style={{
+                        width: 350,
+                        marginLeft: "20px",
+                        marginBottom: "20px",
+                      }}
+                      cover={
+                        <img
+                          width="200px !important"
+                          height="200px"
+                          style={{ padding: "25px" }}
+                          alt={val.title}
+                          src={val.image}
+                        />
+                      }
+                    >
+                      <Meta
+                        title={val.title}
+                        description={
+                          <>
+                            <div className="pdp-price-container">
+                              <Title
+                                level={2}
+                                style={{ margin: "0", marginRight: "10px" }}
+                              >
+                                ₹{fmt.format(val.droppedPrice.price)}
+                              </Title>
+                              {val.droppedPrice.pricee !==
+                                val.originalPrice && (
+                                <>
+                                  <Text
+                                    type="secondary"
+                                    style={{
+                                      fontSize: "18px",
+                                      marginRight: "10px",
+                                    }}
+                                    delete
+                                    strong
+                                  >
+                                    ₹{fmt.format(val.originalPrice)}
+                                  </Text>
+                                  <Title
+                                    level={5}
+                                    style={{
+                                      color: "#07976A",
+                                      fontWeight: "bolder",
+                                      margin: "0",
+                                    }}
+                                  >
+                                    {Math.floor(
+                                      ((val.originalPrice -
+                                        val.droppedPrice.price) /
+                                        val.originalPrice) *
+                                        100
+                                    )}
+                                    % off
+                                  </Title>
+                                </>
+                              )}
+                            </div>
+                            <div style={{ textAlign: "left" }}>
+                              <div style={{ display: "flex" }}>
+                                <Text strong>Minimum Price : &nbsp;</Text>
+                                <div
+                                  style={{
+                                    width: "175px",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Text strong type="success">
+                                    ₹{fmt.format(val.minimumPrice.price)}
+                                  </Text>
+                                  <Text type="secondary">
+                                    {val.minimumPrice.date.split("T")[0]}
+                                  </Text>
+                                </div>
+                              </div>
+                              <div style={{ display: "flex" }}>
+                                <Text strong>Maximum Price : &nbsp;</Text>
+                                <div
+                                  style={{
+                                    width: "175px",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Text strong type="danger">
+                                    ₹{fmt.format(val.maximumPrice.price)}
+                                  </Text>
+                                  <Text type="secondary">
+                                    {val.maximumPrice.date.split("T")[0]}
+                                  </Text>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                position: "absolute",
+                                right: "2%",
+                                top: "0%",
+                              }}
+                            >
+                              <Text type="secondary">
+                                {isNaN(Number(val.droppedPrice.date))
+                                  ? "1 hour ago"
+                                  : timeAgo.format(
+                                      Number(val.droppedPrice.date)
+                                    )}
+                              </Text>
+                            </div>
+                          </>
+                        }
+                      />
+                    </Card>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       ) : (
         <>
