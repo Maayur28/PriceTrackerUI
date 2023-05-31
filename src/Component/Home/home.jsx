@@ -241,7 +241,7 @@ const Home = () => {
                 </Link>
               </div>
               <Divider />
-              {droppedPrice && droppedPrice.length > 9 ? (
+              {droppedPrice && droppedPrice.length > 0 ? (
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
                   {droppedPrice.map((val, index) => (
                     <Card
