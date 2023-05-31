@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Layout,
-  Menu,
-  Image,
-  Avatar,
-} from "antd";
+import { Layout, Menu, Image, Avatar } from "antd";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { UserOutlined } from "@ant-design/icons";
@@ -25,7 +20,7 @@ const Nav = () => {
         }}
       >
         <Menu mode="horizontal">
-          <Menu.Item key="logo" onClick={() => navigate("/")}>
+          <Menu.Item key="logo" onClick={() => window.location.reload(true)}>
             <Image
               width={80}
               height={50}

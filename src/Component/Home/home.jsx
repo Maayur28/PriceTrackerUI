@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Card, Divider, Image, Typography, message } from "antd";
-import { useSearchParams } from "react-router-dom";
+import {
+  Alert,
+  Button,
+  Card,
+  Divider,
+  Image,
+  Space,
+  Tag,
+  Typography,
+  message,
+} from "antd";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import TimelineStatus from "../TimelineStatus/timelineStatus";
 import PDP from "../PDP/pdp";
 import PriceHistory from "../PriceHistory/priceHistory";
@@ -16,8 +26,9 @@ import fmt from "indian-number-format";
 import Meta from "antd/es/card/Meta";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
+import { LineChartOutlined } from "@ant-design/icons";
 
-const { Title, Text } = Typography;
+const { Title, Text, Link } = Typography;
 
 const carousel = (slider) => {
   const z = 300;
@@ -38,6 +49,7 @@ const carousel = (slider) => {
 const Home = () => {
   TimeAgo.addDefaultLocale(en);
   const timeAgo = new TimeAgo("en-US");
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [loading, setloading] = useState(false);
   const [currentTimeline, setCurrentTimeline] = useState(0);
@@ -215,7 +227,9 @@ const Home = () => {
                 }}
               >
                 <Title level={2}>Price Dropped</Title>
-                <Text
+                <Link
+                  href="#latestdeals"
+                  id="latestdeals"
                   type="secondary"
                   style={{
                     marginLeft: "30px",
@@ -224,23 +238,37 @@ const Home = () => {
                   }}
                 >
                   #latest deals
-                </Text>
+                </Link>
               </div>
               <Divider />
               {droppedPrice && droppedPrice.length > 9 ? (
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
                   {droppedPrice.map((val, index) => (
                     <Card
-                    onClick={()=> window.open(val.url, "_blank", "noopener,noreferrer")}
-                      hoverable
                       key={index}
                       style={{
                         width: 350,
                         marginLeft: "20px",
                         marginBottom: "20px",
                       }}
+                      actions={[
+                        <Button
+                          onClick={() => navigate(`/?url=${val.url}`)}
+                          type="text"
+                          icon={<LineChartOutlined />}
+                        >
+                          View Price History
+                        </Button>,
+                      ]}
                       cover={
                         <img
+                          onClick={() =>
+                            window.open(
+                              val.url,
+                              "_blank",
+                              "noopener,noreferrer"
+                            )
+                          }
                           width="200px !important"
                           height="200px"
                           style={{ padding: "25px" }}
@@ -294,40 +322,49 @@ const Home = () => {
                               )}
                             </div>
                             <div style={{ textAlign: "left" }}>
-                              <div style={{ display: "flex" }}>
-                                <Text strong>Minimum Price : &nbsp;</Text>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Text strong>Previous Price : &nbsp;</Text>
                                 <div
                                   style={{
-                                    width: "175px",
+                                    width: "195px",
                                     display: "flex",
                                     justifyContent: "space-between",
                                   }}
                                 >
-                                  <Text strong type="success">
-                                    ₹{fmt.format(val.minimumPrice.price)}
+                                  <Text
+                                    strong
+                                    type="warning"
+                                    keyboard
+                                    style={{ fontSize: "18px" }}
+                                  >
+                                    ₹{fmt.format(val.previousPrice.price)}
                                   </Text>
                                   <Text type="secondary">
-                                    {val.minimumPrice.date.split("T")[0]}
+                                    {val.previousPrice &&
+                                      val.previousPrice.date &&
+                                      val.previousPrice.date.split("T")[0]}
                                   </Text>
                                 </div>
                               </div>
-                              <div style={{ display: "flex" }}>
-                                <Text strong>Maximum Price : &nbsp;</Text>
-                                <div
-                                  style={{
-                                    width: "175px",
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                  }}
-                                >
-                                  <Text strong type="danger">
-                                    ₹{fmt.format(val.maximumPrice.price)}
-                                  </Text>
-                                  <Text type="secondary">
-                                    {val.maximumPrice.date.split("T")[0]}
-                                  </Text>
-                                </div>
-                              </div>
+                            </div>
+                            <div
+                              style={{ marginTop: "10px", textAlign: "left" }}
+                            >
+                              <Space size={[0, "small"]}>
+                                <Tag bordered={false} color="#87D068">
+                                  MinPrice:&nbsp; ₹
+                                  {fmt.format(val.minimumPrice.price)}
+                                </Tag>
+                                <Tag bordered={false} color="#CD201F">
+                                  MaxPrice:&nbsp; ₹
+                                  {fmt.format(val.maximumPrice.price)}
+                                </Tag>
+                              </Space>
                             </div>
                             <div
                               style={{
@@ -344,6 +381,14 @@ const Home = () => {
                                     )}
                               </Text>
                             </div>
+                            <Alert
+                              style={{ marginTop: "10px" }}
+                              message={`Price dropped by ₹${fmt.format(
+                                val.previousPrice.price - val.droppedPrice.price
+                              )}
+                              `}
+                              type="info"
+                            />
                           </>
                         }
                       />
