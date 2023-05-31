@@ -20,7 +20,13 @@ const Nav = () => {
         }}
       >
         <Menu mode="horizontal">
-          <Menu.Item key="logo" onClick={() => window.location.reload(true)}>
+          <Menu.Item
+            key="logo"
+            onClick={() => {
+              navigate("/");
+              window.location.reload(true);
+            }}
+          >
             <Image
               width={80}
               height={50}
