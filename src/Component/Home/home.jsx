@@ -252,23 +252,34 @@ const Home = () => {
                         marginBottom: "20px",
                       }}
                       actions={[
-                        <Button
-                          onClick={() => navigate(`/?url=${val.url}`)}
-                          type="text"
-                          icon={<LineChartOutlined />}
-                        >
-                          View Price History
-                        </Button>,
+                        <>
+                          <Button
+                            onClick={() => navigate(`/?url=${val.url}`)}
+                            type="text"
+                            icon={<LineChartOutlined />}
+                          >
+                            View Price History
+                          </Button>
+                          <Button
+                            type="text"
+                            style={{
+                              width: "90%",
+                              maxWidth: "145px",
+                            }}
+                            onClick={() =>
+                              window.open(
+                                val.url,
+                                "_blank",
+                                "noopener,noreferrer"
+                              )
+                            }
+                          >
+                            <Text strong>BUY ON {val.domain}</Text>
+                          </Button>
+                        </>,
                       ]}
                       cover={
                         <img
-                          onClick={() =>
-                            window.open(
-                              val.url,
-                              "_blank",
-                              "noopener,noreferrer"
-                            )
-                          }
                           width="200px !important"
                           height="200px"
                           style={{ padding: "25px" }}
@@ -384,7 +395,11 @@ const Home = () => {
                             <Alert
                               style={{ marginTop: "10px" }}
                               message={`Price dropped by ₹${fmt.format(
-                                val.previousPrice.price - val.droppedPrice.price
+                                Math.floor(
+                                  (val.previousPrice.price -
+                                    val.droppedPrice.price) *
+                                    100
+                                ) / 100
                               )}
                               `}
                               type="info"
