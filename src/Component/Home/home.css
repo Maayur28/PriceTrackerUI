@@ -85,12 +85,7 @@ body {
   height: 150px;
   border: 1px solid rgba(0, 0, 0, 0.3);
 }
-.ant-alert-info {
-  background-color: #e783cb;
-  
-  border-color: #e78cd7;
-}
 .ant-alert-message {
-  color: white;
   font-weight: bolder;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
 }

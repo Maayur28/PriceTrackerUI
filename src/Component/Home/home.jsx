@@ -394,7 +394,7 @@ const Home = () => {
                             </div>
                             <Alert
                               style={{ marginTop: "10px" }}
-                              message={`Price dropped by ₹${fmt.format(
+                              message={`PRICE DROPPED BY ₹${fmt.format(
                                 Math.floor(
                                   (val.previousPrice.price -
                                     val.droppedPrice.price) *
