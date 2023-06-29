@@ -29,7 +29,7 @@ const Register = () => {
   const onFinish = (values) => {
     setIsSubmitting(true);
     setError("");
-    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/register", {
+    fetch("https://auth.trackprice.co.in/register", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {
@@ -59,7 +59,7 @@ const Register = () => {
     let obj = {};
     obj.sessionId = Cookies.get("sessionId");
     obj.otp = otp;
-    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyotp", {
+    fetch("https://auth.trackprice.co.in/verifyotp", {
       method: "POST",
       body: JSON.stringify(obj),
       headers: {

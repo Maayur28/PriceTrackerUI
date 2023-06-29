@@ -76,7 +76,7 @@ const Home = () => {
       Cookies.get("refreshToken") === undefined
     )
       clearLogout();
-    fetch(`https://lobster-app-5zvv7.ondigitalocean.app/getDroppedPrice`)
+    fetch(`https://product.trackprice.co.in/getDroppedPrice`)
       .then(async (response) => {
         if (response.status >= 200 && response.status <= 299) {
           return response.json();

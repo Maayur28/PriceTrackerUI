@@ -141,7 +141,7 @@ const Trackers = () => {
       try {
         onClose();
         const response = await axios.post(
-          `https://pricetracker-orch-agxf8.ondigitalocean.app/gettracker?page=${
+          `https://orch.trackprice.co.in/gettracker?page=${
             page === 0 ? currentPage : page
           }&limit=${limit}&sortBy=${
             defaultSortBy == null ? sortBy : defaultSortBy
@@ -208,7 +208,7 @@ const Trackers = () => {
           obj.refreshToken = Cookies.get("refreshToken");
           obj.filter = filterQuery;
           const response = await axios.put(
-            `https://pricetracker-orch-agxf8.ondigitalocean.app/updatetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`,
+            `https://orch.trackprice.co.in/updatetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`,
             obj,
             {
               headers: {
@@ -270,7 +270,7 @@ const Trackers = () => {
         obj.refreshToken = Cookies.get("refreshToken");
         obj.filter = filterQuery;
         const response = await axios.put(
-          `https://pricetracker-orch-agxf8.ondigitalocean.app/deletetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`,
+          `https://orch.trackprice.co.in/deletetracker?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`,
           obj,
           {
             headers: {

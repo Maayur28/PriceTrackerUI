@@ -93,7 +93,7 @@ const Profile = () => {
 
   const fetchProfile = () => {
     setIsSubmitting(true);
-    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyaccess", {
+    fetch("https://auth.trackprice.co.in/verifyaccess", {
       method: "POST",
       body: JSON.stringify({
         accessToken: Cookies.get("accessToken"),
@@ -117,9 +117,7 @@ const Profile = () => {
             expires: 7,
             path: "",
           });
-          fetch(
-            `https://seahorse-app-xmw4g.ondigitalocean.app/getprofile/${data.userid}`
-          )
+          fetch(`https://auth.trackprice.co.in/getprofile/${data.userid}`)
             .then(async (response) => {
               if (response.status >= 200 && response.status <= 299) {
                 return response.json();
@@ -173,7 +171,7 @@ const Profile = () => {
   const onFinish = (values) => {
     if (usernameVerified) {
       setIsSubmitting(true);
-      fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyaccess", {
+      fetch("https://auth.trackprice.co.in/verifyaccess", {
         method: "POST",
         body: JSON.stringify({
           accessToken: Cookies.get("accessToken"),
@@ -211,7 +209,7 @@ const Profile = () => {
               values.image = "";
             }
             fetch(
-              `https://seahorse-app-xmw4g.ondigitalocean.app/updateprofile/${data.userid}`,
+              `https://auth.trackprice.co.in/updateprofile/${data.userid}`,
               {
                 method: "PUT",
                 body: JSON.stringify(values),
@@ -289,7 +287,7 @@ const Profile = () => {
     } else {
       setVerifyCalled(true);
       setValidating(true);
-      fetch("https://seahorse-app-xmw4g.ondigitalocean.app/verifyaccess", {
+      fetch("https://auth.trackprice.co.in/verifyaccess", {
         method: "POST",
         body: JSON.stringify({
           accessToken: Cookies.get("accessToken"),
@@ -314,7 +312,7 @@ const Profile = () => {
               path: "",
             });
             fetch(
-              `https://seahorse-app-xmw4g.ondigitalocean.app/validateusername/${form.getFieldValue(
+              `https://auth.trackprice.co.in/validateusername/${form.getFieldValue(
                 "username"
               )}`
             )

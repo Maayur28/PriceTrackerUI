@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const ORCHESTRATION_BASE_URL =
-  "https://pricetracker-orch-agxf8.ondigitalocean.app";
+const ORCHESTRATION_BASE_URL = "https://orch.trackprice.co.in";
 
 export const fetchData = async (val) => {
   let data = null;

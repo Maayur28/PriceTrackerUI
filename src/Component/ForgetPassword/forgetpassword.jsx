@@ -10,7 +10,7 @@ const ForgetPassword = () => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
     setIsSubmitting(true);
-    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/forgetpassword", {
+    fetch("https://auth.trackprice.co.in/forgetpassword", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {

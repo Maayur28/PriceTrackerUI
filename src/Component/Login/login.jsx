@@ -25,7 +25,7 @@ const Login = () => {
 
   const onFinish = (values) => {
     setIsSubmitting(true);
-    fetch("https://seahorse-app-xmw4g.ondigitalocean.app/login", {
+    fetch("https://auth.trackprice.co.in/login", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {

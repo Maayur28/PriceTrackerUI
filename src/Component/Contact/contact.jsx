@@ -23,7 +23,7 @@ const Contact = () => {
       obj.rating != null &&
       recaptchaValue != null
     ) {
-      fetch("https://seahorse-app-xmw4g.ondigitalocean.app/contact", {
+      fetch("https://auth.trackprice.co.in/contact", {
         method: "POST",
         body: JSON.stringify(obj),
         headers: {
