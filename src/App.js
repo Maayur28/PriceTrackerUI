@@ -1,4 +1,3 @@
-import "./App.css";
 import Title from "antd/es/typography/Title";
 import Link from "antd/es/typography/Link";
 
