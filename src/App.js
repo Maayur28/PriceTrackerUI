@@ -1,29 +1,33 @@
 import "./App.css";
-import Home from "./Component/Home/home";
-import Nav from "./Component/Nav/nav";
-import Account from "./Component/Account/account";
-import Login from "./Component/Login/login";
-import Register from "./Component/Register/register";
-import Contact from "./Component/Contact/contact";
-import ForgetPassword from "./Component/ForgetPassword/forgetpassword";
-import { Route, Routes } from "react-router-dom";
-import NotFound from "./Component/NotFound";
-import Trackers from "./Component/Trackers/trackers";
+import Title from "antd/es/typography/Title";
+import Link from "antd/es/typography/Link";
 
 function App() {
   return (
-    <div className="App">
-      <Nav />
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/account" element={<Account />}></Route>
-        <Route path="/trackers" element={<Trackers />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/register" element={<Register />}></Route>
-        <Route path="/contact" element={<Contact />}></Route>
-        <Route path="/forgetpassword" element={<ForgetPassword />}></Route>
-        <Route path="*" element={<NotFound />}></Route>
-      </Routes>
+    <div
+      className="App"
+      style={{
+        display: "flex",
+        width: "100vw",
+        height: "80vh",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Title level={2}>
+        We are migrated to new website with better UI and lots of cool features
+      </Title>
+      <Link
+        href="https://trackmyprice.in/"
+        id="latestdeals"
+        style={{
+          marginTop: "12px",
+          fontSize: "22px",
+        }}
+      >
+        https://trackmyprice.in/
+      </Link>
     </div>
   );
 }
