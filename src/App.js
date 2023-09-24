@@ -17,7 +17,7 @@ function App() {
       <Title level={2}>
         We are migrated to new website with better UI and lots of cool features
       </Title>
-      <Title level={2}>Have a look!!! Its still in progress...</Title>
+      <Title level={2}>Have a look!!!</Title>
       <Link
         href="https://trackmyprice.in/"
         id="latestdeals"
